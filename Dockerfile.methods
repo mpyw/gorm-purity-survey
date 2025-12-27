@@ -37,7 +37,7 @@ RUN echo '#!/bin/sh' > /app/run.sh && \
     echo 'else' >> /app/run.sh && \
     echo '  TAGS=""' >> /app/run.sh && \
     echo 'fi' >> /app/run.sh && \
-    echo 'exec go run $TAGS ./scripts/enumerate/...' >> /app/run.sh && \
+    echo 'exec go run $TAGS ./scripts/methods/...' >> /app/run.sh && \
     chmod +x /app/run.sh
 
 # Default: run enumeration with appropriate build tags

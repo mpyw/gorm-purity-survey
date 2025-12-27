@@ -1,14 +1,14 @@
 #!/bin/bash
-# Run survey for a specific GORM version
-# Usage: ./scripts/run-version.sh v1.25.0
+# Run purity tests for a specific GORM version
+# Usage: ./scripts/purity-run.sh v1.25.0
 #
 # Includes retry logic for transient Docker/network failures
 
 set -e
 
 VERSION="${1:?Version required (e.g., v1.25.0)}"
-METHODS_DIR="methods"
-RESULT_FILE="${METHODS_DIR}/${VERSION}.json"
+PURITY_DIR="purity"
+RESULT_FILE="${PURITY_DIR}/${VERSION}.json"
 MAX_RETRIES=3
 
 # Skip if already processed
@@ -20,15 +20,16 @@ fi
 echo "[START] ${VERSION}"
 
 for attempt in $(seq 1 $MAX_RETRIES); do
-    # Build container
+    # Build container with purity Dockerfile
     if docker build \
+        -f Dockerfile.purity \
         --build-arg "GORM_VERSION=${VERSION}" \
         --quiet \
-        -t "gorm-survey:${VERSION}" \
+        -t "gorm-purity:${VERSION}" \
         . > /dev/null 2>&1; then
 
-        # Run enumeration
-        if docker run --rm "gorm-survey:${VERSION}" > "$RESULT_FILE" 2>&1; then
+        # Run purity tests
+        if docker run --rm "gorm-purity:${VERSION}" > "$RESULT_FILE" 2>&1; then
             # Verify JSON is valid
             if jq empty "$RESULT_FILE" 2>/dev/null; then
                 echo "[DONE] ${VERSION} -> ${RESULT_FILE}"

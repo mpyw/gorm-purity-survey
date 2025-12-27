@@ -1,8 +1,8 @@
 #!/bin/bash
 # Enumerate methods for all GORM versions in parallel
-# Usage: ./scripts/enumerate-all.sh [parallelism]
+# Usage: ./scripts/methods-all.sh [parallelism]
 #
-# Each version has built-in retry logic (see run-version.sh)
+# Each version has built-in retry logic (see methods-run.sh)
 
 PARALLELISM="${1:-4}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -19,11 +19,11 @@ echo "Versions: ${TOTAL_VERSIONS}"
 echo "Parallelism: ${PARALLELISM}"
 echo ""
 
-# Make run-version.sh executable
-chmod +x scripts/run-version.sh
+# Make methods-run.sh executable
+chmod +x scripts/methods-run.sh
 
 # Run in parallel (don't use set -e, collect failures)
-cat versions.txt | xargs -P "$PARALLELISM" -I {} ./scripts/run-version.sh {} || true
+cat versions.txt | xargs -P "$PARALLELISM" -I {} ./scripts/methods-run.sh {} || true
 
 echo ""
 echo "=== Summary ==="

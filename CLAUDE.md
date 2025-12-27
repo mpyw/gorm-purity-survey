@@ -111,23 +111,25 @@ replace gorm.io/gorm => gorm.io/gorm v1.25.0
 ## Development Commands
 
 ```bash
-# Run enumeration for latest version (host, with Generics API)
-go run -tags gorm_v125plus ./scripts/enumerate/... > results/latest.json
+# === Method Enumeration ===
+# Run for single version
+./scripts/methods-run.sh v1.25.0
 
-# Run enumeration for single version (Docker)
-./scripts/run-version.sh v1.25.0
+# Run ALL 77 versions in parallel
+./scripts/methods-all.sh 4
 
-# Run ALL 77 versions in parallel (adjust parallelism as needed)
-./scripts/enumerate-all.sh 4
+# Generate report
+./scripts/methods-generate-markdown.sh > methods/REPORT.md
 
-# Quick sample (representative versions only)
-docker compose up --build
+# === Purity Testing ===
+# Run for single version
+./scripts/purity-run.sh v1.25.0
 
-# Compare methods between two versions
-./scripts/diff-versions.sh v1.20.0 v1.30.0
+# Run ALL 77 versions in parallel
+./scripts/purity-all.sh 4
 
-# Generate Markdown report from results
-./scripts/generate-markdown.sh > results/REPORT.md
+# Generate report
+./scripts/purity-generate-markdown.sh > purity/REPORT.md
 ```
 
 ## Survey Workflow
@@ -200,22 +202,29 @@ gorm-purity-survey/
 ├── CLAUDE.md              # This file
 ├── README.md              # Project overview
 ├── go.mod
-├── Dockerfile
-├── compose.yaml           # Multi-version test matrix
+├── Dockerfile.methods     # Method enumeration Docker
+├── Dockerfile.purity      # Purity testing Docker
 │
 ├── scripts/
-│   └── enumerate/main.go  # Method enumeration
+│   ├── methods/           # Method enumeration Go code
+│   │   └── main.go
+│   ├── methods-run.sh     # Run enumeration for single version
+│   ├── methods-all.sh     # Run enumeration for all versions
+│   ├── methods-generate-markdown.sh
+│   │
+│   ├── purity/            # Purity testing Go code
+│   │   ├── main.go
+│   │   └── version_*.go   # Version-specific tests (build tags)
+│   ├── purity-run.sh      # Run purity test for single version
+│   ├── purity-all.sh      # Run purity test for all versions
+│   └── purity-generate-markdown.sh
 │
-├── methods/               # Method metadata
-│   └── categories.go      # Categorized method list
+├── methods/               # Method enumeration results (JSON per version)
 │
-├── tests/                 # Test code
-│   ├── pollution_test.go  # Pollution detection tests
-│   └── immutable_test.go  # Immutable-return tests
+├── purity/                # Purity test results (JSON per version)
 │
-└── results/               # Survey results per version
-    ├── latest.json
-    └── ...
+└── tests/                 # Test utilities
+    └── capture/           # SQL capture logger
 ```
 
 ## Version Matrix
@@ -291,27 +300,29 @@ cap.AllSQL()                     // Get all SQL
 cap.ContainsNormalized("admin")  // Check (case-insensitive, whitespace-normalized)
 ```
 
-### Pollution Test Pattern
+### Pure Test Pattern
 
-"Does calling this method and discarding the result plant a bomb?"
+"Does calling this method pollute the receiver?"
+
+**IMPORTANT**: Test from MUTABLE base (no Session), not immutable.
 
 ```go
-func TestPollution_Where(t *testing.T) {
+func TestPure_Where(t *testing.T) {
     db, mock, cap := setupDB(t)
 
-    // 1. Create immutable base
-    base := db.Session(&gorm.Session{}).Model(&User{})
+    // 1. Create MUTABLE base (NO Session!)
+    q := db.Model(&User{}).Where("base")
 
-    // 2. Call method and DISCARD result (bomb pattern)
-    base.Where("role = ?", "admin")  // Result discarded!
+    // 2. Call method and DISCARD result
+    q.Where("marker")  // Does this pollute q?
 
     // 3. Execute Finisher on original
     mock.ExpectQuery(".*").WillReturnRows(...)
-    base.Find(&users)
+    q.Find(&users)
 
-    // 4. Check: if "admin" appears, Where polluted the receiver
-    if cap.ContainsNormalized("admin") {
-        // POLLUTES - not pure
+    // 4. Check: if "marker" appears, method polluted receiver
+    if cap.ContainsNormalized("marker") {
+        // NOT pure - pollutes receiver
     }
 }
 ```
@@ -324,19 +335,66 @@ func TestPollution_Where(t *testing.T) {
 func TestImmutableReturn_Where(t *testing.T) {
     db, mock, cap := setupDB(t)
 
-    // 1. Get result from method
-    q := db.Model(&User{}).Where("base = ?", true)
+    // 1. Get the return value to test
+    q := db.Model(&User{}).Where("base")
 
-    // 2. Branch 1
-    q.Where("branch = ?", "one").Find(&r1)
+    // 2. Branch 1 - execute first
+    mock.ExpectQuery(".*").WillReturnRows(...)
+    q.Where("branch_one").Find(&r1)
 
-    // 3. Branch 2 - should NOT contain "one"
+    // 3. Branch 2 - should NOT contain "branch_one"
     cap.Reset()
-    q.Where("branch = ?", "two").Find(&r2)
+    mock.ExpectQuery(".*").WillReturnRows(...)
+    q.Where("branch_two").Find(&r2)
 
-    // 4. Check: if "one" appears, branches interfere
-    if cap.ContainsNormalized("one") {
-        // NOT immutable-return
+    // 4. Check: if "branch_one" appears, return value is mutable
+    if cap.ContainsNormalized("branch_one") {
+        // NOT immutable-return - branches interfere
+    }
+}
+```
+
+### Callback Argument Immutability Test Pattern
+
+"Can the callback's `*gorm.DB` argument be branched without interference?"
+
+For methods like Preload that take `func(*gorm.DB) *gorm.DB` callbacks:
+
+```go
+func TestCallbackImmutable_Preload(t *testing.T) {
+    db, mock, cap := setupDB(t)
+
+    // Use recover() since callback support varies by version
+    defer func() {
+        if r := recover(); r != nil {
+            // Callback not supported in this version
+        }
+    }()
+
+    var callCount int
+    callback := func(tx *gorm.DB) *gorm.DB {
+        callCount++
+        // Branch from callback's *gorm.DB
+        if callCount == 1 {
+            return tx.Where("callback_marker")
+        }
+        return tx
+    }
+
+    q := db.Model(&User{}).Preload("Association", callback)
+
+    // First execution
+    mock.ExpectQuery(".*").WillReturnRows(...)
+    q.Find(&r1)
+
+    // Second execution - check if callback's db was polluted
+    cap.Reset()
+    mock.ExpectQuery(".*").WillReturnRows(...)
+    q.Find(&r2)
+
+    // If "callback_marker" appears twice, callback db is mutable
+    if cap.CountNormalized("callback_marker") > 1 {
+        // Callback argument is MUTABLE (v1.30.0+ regression!)
     }
 }
 ```
@@ -432,14 +490,50 @@ All hold `*gorm.DB` internally via `ops []op` pattern.
 3. **Method existence per version**: `MapColumns`, `InnerJoins` may not exist in old versions
 4. **Statement clone timing**: When exactly is Statement cloned?
 
-## Next Steps
+## Next Steps (Current Status)
 
-When resuming work on this project:
+**Purity tests need to be rewritten with correct strategy.**
 
-1. **If Phase 3 incomplete**: Create `methods/categories.go` with priority categorization
-2. **If Phase 4 incomplete**: Create pollution/immutable tests for high-priority methods
-3. **If Phase 5 incomplete**: Run bisect on methods with suspected version differences
-4. **If Phase 6 incomplete**: Compile results into actionable gormreuse recommendations
+### Problem with Current Tests
+- Current tests start from `Session()` (immutable base)
+- This only tests Session's isolation, NOT actual mutable branching behavior
+- Missed detecting: Preload callback regression in v1.30.0, Joins double-execution bomb
+
+### TODO: Rewrite Purity Tests
+
+1. **Pure test**: Test from MUTABLE base (no Session)
+   ```go
+   q := db.Model(&User{}).Where("x")  // mutable
+   q.Where("marker")                   // discard result
+   q.Find(&r)                          // check if "marker" appears
+   ```
+
+2. **Immutable-return test**: Branch from return value
+   ```go
+   q := db.Where("x")
+   q.Where("a").Find(&r1)
+   q.Where("b").Find(&r2)  // check if "a" leaks
+   ```
+
+3. **Callback argument immutability test**: For Preload/Joins callbacks
+   ```go
+   q := db.Preload("Assoc", func(tx *gorm.DB) *gorm.DB {
+       return tx.Where("marker")
+   })
+   q.Find(&r1)
+   q.Find(&r2)  // check if "marker" accumulates
+   ```
+
+4. **Use recover()**: Callback support varies by version, wrap in recover
+
+### Known Version-Specific Issues to Detect
+- **v1.30.0**: Preload callback `*gorm.DB` has `clone=0` (GitHub #7662)
+- **v1.25~v1.30**: Joins behavior changed (double-execution causes error)
+
+### When Resuming
+1. Rewrite `scripts/purity/main.go` with correct test patterns
+2. Re-run on all 77 versions
+3. Verify detection of known regressions (v1.30.0 Preload issue)
 
 ## References
 

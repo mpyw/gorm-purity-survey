@@ -1,0 +1,59 @@
+# Dockerfile for GORM purity survey
+# Usage: docker build -f Dockerfile.purity --build-arg GORM_VERSION=v1.25.0 -t gorm-purity:v1.25.0 .
+
+FROM golang:1.22-alpine
+
+ARG GORM_VERSION=latest
+
+WORKDIR /app
+
+# Install git for go get
+RUN apk add --no-cache git
+
+# Copy source files first (excluding go.mod via .dockerignore)
+COPY . .
+
+# Use go.mod.template as base (just module declaration)
+RUN cp go.mod.template go.mod
+
+# Add replace directive first, then install dependencies
+RUN echo "replace gorm.io/gorm => gorm.io/gorm ${GORM_VERSION}" >> go.mod && \
+    go get "gorm.io/gorm@${GORM_VERSION}" && \
+    go get github.com/DATA-DOG/go-sqlmock && \
+    go mod tidy
+
+# Store version for runtime detection
+RUN echo "${GORM_VERSION}" > /tmp/gorm_version.txt
+
+# Create entrypoint script that sets build tags based on version
+# Version tag mapping:
+#   v1.21+: gorm_v121plus
+#   v1.23+: gorm_v123plus
+#   v1.25+: gorm_v125plus
+#   v1.26+: gorm_v126plus
+RUN echo '#!/bin/sh' > /app/run.sh && \
+    echo 'VERSION=$(cat /tmp/gorm_version.txt)' >> /app/run.sh && \
+    echo 'MAJOR=$(echo $VERSION | sed "s/v//" | cut -d. -f1)' >> /app/run.sh && \
+    echo 'MINOR=$(echo $VERSION | sed "s/v//" | cut -d. -f2)' >> /app/run.sh && \
+    echo 'TAGS=""' >> /app/run.sh && \
+    echo 'if [ "$MAJOR" -gt 1 ] || ([ "$MAJOR" -eq 1 ] && [ "$MINOR" -ge 21 ]); then' >> /app/run.sh && \
+    echo '  TAGS="gorm_v121plus"' >> /app/run.sh && \
+    echo 'fi' >> /app/run.sh && \
+    echo 'if [ "$MAJOR" -gt 1 ] || ([ "$MAJOR" -eq 1 ] && [ "$MINOR" -ge 23 ]); then' >> /app/run.sh && \
+    echo '  TAGS="$TAGS,gorm_v123plus"' >> /app/run.sh && \
+    echo 'fi' >> /app/run.sh && \
+    echo 'if [ "$MAJOR" -gt 1 ] || ([ "$MAJOR" -eq 1 ] && [ "$MINOR" -ge 25 ]); then' >> /app/run.sh && \
+    echo '  TAGS="$TAGS,gorm_v125plus"' >> /app/run.sh && \
+    echo 'fi' >> /app/run.sh && \
+    echo 'if [ "$MAJOR" -gt 1 ] || ([ "$MAJOR" -eq 1 ] && [ "$MINOR" -ge 26 ]); then' >> /app/run.sh && \
+    echo '  TAGS="$TAGS,gorm_v126plus"' >> /app/run.sh && \
+    echo 'fi' >> /app/run.sh && \
+    echo 'if [ -n "$TAGS" ]; then' >> /app/run.sh && \
+    echo '  exec go run -tags "$TAGS" ./scripts/purity/...' >> /app/run.sh && \
+    echo 'else' >> /app/run.sh && \
+    echo '  exec go run ./scripts/purity/...' >> /app/run.sh && \
+    echo 'fi' >> /app/run.sh && \
+    chmod +x /app/run.sh
+
+# Default: run purity tests with appropriate build tags
+CMD ["/app/run.sh"]

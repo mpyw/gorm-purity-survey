@@ -45,19 +45,16 @@ Expected format:
 
 A method is **pure** if calling it does not "pollute" the `*gorm.DB` argument or receiver.
 
-**Definition of "pollution" (bomb pattern)**:
-- Creating a state that causes problems **when a Finisher is called later**, even if the call itself appears harmless
-- Example: `Clauses()` sets up conditions → later `Find()` executes unexpected SQL
+**Definition of "pollution"**:
+- Chain methods like `Where()`, `Clauses()` add conditions to the shared `Statement` — harmless by themselves
+- But when a Finisher like `Find()` is called, it triggers all accumulated conditions
+- If the `Statement` is shared across branches, conditions from one branch leak into another
 
 ```go
-// Bomb pattern example
-func addClause(db *gorm.DB) {
-    db.Clauses(...)  // Nothing happens at this point
-}
-
 q := db.Where("x")
-addClause(q)        // Bomb planted
-q.Find(&results)    // BOOM! Unexpected SQL
+q.Where("a").Find(&admins)  // Find() triggers "x" + "a"
+q.Where("b").Find(&users)   // Find() triggers "x" + "a" + "b" — BOOM!
+//                             Expected only "x" + "b"
 ```
 
 ### 2. Immutable-Return Classification

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Generate Markdown report from survey JSON results
-# Usage: ./scripts/generate-markdown.sh > methods/REPORT.md
+# Usage: ./scripts/methods-generate-markdown.sh > methods/REPORT.md
 
 set -e
 
@@ -10,7 +10,7 @@ OUTPUT_FILE="${2:-methods/REPORT.md}"
 # Check if results exist
 if [ ! -d "$METHODS_DIR" ] || [ -z "$(ls -A "$METHODS_DIR"/*.json 2>/dev/null)" ]; then
     echo "Error: No JSON files found in $METHODS_DIR"
-    echo "Run ./scripts/enumerate-all.sh first"
+    echo "Run ./scripts/methods-all.sh first"
     exit 1
 fi
 

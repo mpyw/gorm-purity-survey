@@ -1,0 +1,281 @@
+{
+  "gorm_version": "v1.24.4",
+  "methods": {
+    "Assign": {
+      "name": "Assign",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Assign modifies Statement.Assigns (used with FirstOrCreate/FirstOrInit)"
+    },
+    "Attrs": {
+      "name": "Attrs",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Attrs modifies Statement.Attrs (used with FirstOrCreate/FirstOrInit)"
+    },
+    "Begin": {
+      "name": "Begin",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true,
+      "pure_note": "Begin creates new transaction instance",
+      "immutable_note": "Begin returns new transaction (immutable)"
+    },
+    "Clauses": {
+      "name": "Clauses",
+      "exists": true,
+      "pure": false
+    },
+    "Connection": {
+      "name": "Connection",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Connection creates isolated connection context"
+    },
+    "Count": {
+      "name": "Count",
+      "exists": true,
+      "pure": false
+    },
+    "Create": {
+      "name": "Create",
+      "exists": true,
+      "pure": true
+    },
+    "CreateInBatches": {
+      "name": "CreateInBatches",
+      "exists": true,
+      "pure": true
+    },
+    "Debug": {
+      "name": "Debug",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true,
+      "pure_note": "Debug creates new instance",
+      "immutable_note": "Debug returns immutable (like Session)"
+    },
+    "Delete": {
+      "name": "Delete",
+      "exists": true,
+      "pure": true
+    },
+    "Distinct": {
+      "name": "Distinct",
+      "exists": true,
+      "pure": false,
+      "immutable_return": true
+    },
+    "Exec": {
+      "name": "Exec",
+      "exists": true,
+      "pure": true
+    },
+    "Find": {
+      "name": "Find",
+      "exists": true,
+      "pure": false
+    },
+    "First": {
+      "name": "First",
+      "exists": true,
+      "pure": false
+    },
+    "FirstOrCreate": {
+      "name": "FirstOrCreate",
+      "exists": true,
+      "pure": true,
+      "pure_note": "FirstOrCreate behavior is complex, assumed pure"
+    },
+    "FirstOrInit": {
+      "name": "FirstOrInit",
+      "exists": true,
+      "pure": true,
+      "pure_note": "FirstOrInit behavior is complex, assumed pure"
+    },
+    "Group": {
+      "name": "Group",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Having": {
+      "name": "Having",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Joins": {
+      "name": "Joins",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Last": {
+      "name": "Last",
+      "exists": true,
+      "pure": false
+    },
+    "Limit": {
+      "name": "Limit",
+      "exists": true,
+      "pure": false,
+      "immutable_return": true
+    },
+    "Model": {
+      "name": "Model",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Not": {
+      "name": "Not",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Offset": {
+      "name": "Offset",
+      "exists": true,
+      "pure": false,
+      "immutable_return": true
+    },
+    "Omit": {
+      "name": "Omit",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Omit modifies Statement.Omit (hard to verify via SQL)"
+    },
+    "Or": {
+      "name": "Or",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Order": {
+      "name": "Order",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Pluck": {
+      "name": "Pluck",
+      "exists": true,
+      "pure": false
+    },
+    "Preload": {
+      "name": "Preload",
+      "exists": true,
+      "pure": true,
+      "callback_arg_immutable": true,
+      "pure_note": "Preload modifies Statement.Preloads (not visible in main SQL)"
+    },
+    "Raw": {
+      "name": "Raw",
+      "exists": true,
+      "pure": false
+    },
+    "Row": {
+      "name": "Row",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Row behaves similarly to Find (finisher)"
+    },
+    "Rows": {
+      "name": "Rows",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Rows behaves similarly to Find (finisher)"
+    },
+    "Save": {
+      "name": "Save",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Save behavior is complex (upsert), assumed pure"
+    },
+    "Scan": {
+      "name": "Scan",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Scan behaves similarly to Find (finisher)"
+    },
+    "Scopes": {
+      "name": "Scopes",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false
+    },
+    "Select": {
+      "name": "Select",
+      "exists": true,
+      "pure": false,
+      "immutable_return": true
+    },
+    "Session": {
+      "name": "Session",
+      "exists": true,
+      "pure": true,
+      "immutable_return": false,
+      "pure_note": "Session creates new instance",
+      "immutable_note": "CRITICAL BUG: Session should return immutable!"
+    },
+    "Table": {
+      "name": "Table",
+      "exists": true,
+      "pure": false,
+      "immutable_return": true
+    },
+    "Take": {
+      "name": "Take",
+      "exists": true,
+      "pure": false
+    },
+    "ToSQL": {
+      "name": "ToSQL",
+      "exists": true,
+      "pure": true,
+      "pure_note": "ToSQL generates SQL without execution"
+    },
+    "Unscoped": {
+      "name": "Unscoped",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Unscoped requires soft delete model to test"
+    },
+    "Update": {
+      "name": "Update",
+      "exists": true,
+      "pure": true
+    },
+    "Updates": {
+      "name": "Updates",
+      "exists": true,
+      "pure": true
+    },
+    "Where": {
+      "name": "Where",
+      "exists": true,
+      "pure": false,
+      "immutable_return": false,
+      "pure_note": "Where pollutes receiver when result discarded",
+      "immutable_note": "Where return value is mutable (branches interfere)"
+    },
+    "WithContext": {
+      "name": "WithContext",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true,
+      "pure_note": "WithContext creates new instance",
+      "immutable_note": "WithContext returns immutable (like Session)"
+    }
+  },
+  "summary": {
+    "total_methods": 45,
+    "pure_methods": 23,
+    "impure_methods": 22,
+    "immutable_count": 8,
+    "mutable_count": 10,
+    "callback_immutable": 1,
+    "callback_mutable": 0
+  }
+}

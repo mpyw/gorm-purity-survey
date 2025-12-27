@@ -1,0 +1,266 @@
+{
+  "gorm_version": "v1.21.0",
+  "methods": {
+    "Assign": {
+      "name": "Assign",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Assign modifies Statement.Assigns (used with FirstOrCreate/FirstOrInit)"
+    },
+    "Attrs": {
+      "name": "Attrs",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Attrs modifies Statement.Attrs (used with FirstOrCreate/FirstOrInit)"
+    },
+    "Begin": {
+      "name": "Begin",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true,
+      "pure_note": "Begin creates new transaction instance",
+      "immutable_note": "Begin returns new transaction (immutable)"
+    },
+    "Clauses": {
+      "name": "Clauses",
+      "exists": true,
+      "pure": true
+    },
+    "Count": {
+      "name": "Count",
+      "exists": true,
+      "pure": true
+    },
+    "Create": {
+      "name": "Create",
+      "exists": true,
+      "pure": true
+    },
+    "CreateInBatches": {
+      "name": "CreateInBatches",
+      "exists": true,
+      "pure": true
+    },
+    "Debug": {
+      "name": "Debug",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true,
+      "pure_note": "Debug creates new instance",
+      "immutable_note": "Debug returns immutable (like Session)"
+    },
+    "Delete": {
+      "name": "Delete",
+      "exists": true,
+      "pure": true
+    },
+    "Distinct": {
+      "name": "Distinct",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Exec": {
+      "name": "Exec",
+      "exists": true,
+      "pure": true
+    },
+    "Find": {
+      "name": "Find",
+      "exists": true,
+      "pure": true
+    },
+    "First": {
+      "name": "First",
+      "exists": true,
+      "pure": true
+    },
+    "FirstOrCreate": {
+      "name": "FirstOrCreate",
+      "exists": true,
+      "pure": true,
+      "pure_note": "FirstOrCreate behavior is complex, assumed pure"
+    },
+    "FirstOrInit": {
+      "name": "FirstOrInit",
+      "exists": true,
+      "pure": true,
+      "pure_note": "FirstOrInit behavior is complex, assumed pure"
+    },
+    "Group": {
+      "name": "Group",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Having": {
+      "name": "Having",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Joins": {
+      "name": "Joins",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Last": {
+      "name": "Last",
+      "exists": true,
+      "pure": true
+    },
+    "Limit": {
+      "name": "Limit",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Model": {
+      "name": "Model",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Not": {
+      "name": "Not",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Offset": {
+      "name": "Offset",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Omit": {
+      "name": "Omit",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Omit modifies Statement.Omit (hard to verify via SQL)"
+    },
+    "Or": {
+      "name": "Or",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Order": {
+      "name": "Order",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Pluck": {
+      "name": "Pluck",
+      "exists": true,
+      "pure": true
+    },
+    "Preload": {
+      "name": "Preload",
+      "exists": true,
+      "pure": true,
+      "callback_arg_immutable": true,
+      "pure_note": "Preload modifies Statement.Preloads (not visible in main SQL)"
+    },
+    "Raw": {
+      "name": "Raw",
+      "exists": true,
+      "pure": true
+    },
+    "Row": {
+      "name": "Row",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Row behaves similarly to Find (finisher)"
+    },
+    "Rows": {
+      "name": "Rows",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Rows behaves similarly to Find (finisher)"
+    },
+    "Save": {
+      "name": "Save",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Save behavior is complex (upsert), assumed pure"
+    },
+    "Scan": {
+      "name": "Scan",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Scan behaves similarly to Find (finisher)"
+    },
+    "Scopes": {
+      "name": "Scopes",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Select": {
+      "name": "Select",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Session": {
+      "name": "Session",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true,
+      "pure_note": "Session creates new instance"
+    },
+    "Table": {
+      "name": "Table",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "Take": {
+      "name": "Take",
+      "exists": true,
+      "pure": true
+    },
+    "Unscoped": {
+      "name": "Unscoped",
+      "exists": true,
+      "pure": true,
+      "pure_note": "Unscoped requires soft delete model to test"
+    },
+    "Update": {
+      "name": "Update",
+      "exists": true,
+      "pure": true
+    },
+    "Updates": {
+      "name": "Updates",
+      "exists": true,
+      "pure": true
+    },
+    "Where": {
+      "name": "Where",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true
+    },
+    "WithContext": {
+      "name": "WithContext",
+      "exists": true,
+      "pure": true,
+      "immutable_return": true,
+      "pure_note": "WithContext creates new instance",
+      "immutable_note": "WithContext returns immutable (like Session)"
+    }
+  },
+  "summary": {
+    "total_methods": 43,
+    "pure_methods": 43,
+    "impure_methods": 0,
+    "immutable_count": 18,
+    "mutable_count": 0,
+    "callback_immutable": 1,
+    "callback_mutable": 0
+  }
+}
