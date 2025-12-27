@@ -26,12 +26,31 @@ The survey results will serve as **evidence** of GORM's dangerous versioning pra
 
 Some methods do both (e.g., `Scopes` takes `func(*gorm.DB) *gorm.DB`).
 
-### Pure
+### Purity Classification (3 Levels)
 
-A method is **pure** if calling it does NOT pollute the receiver or argument `*gorm.DB`.
+| Symbol | State | Behavior | Risk |
+|--------|-------|----------|------|
+| ✅ | **Pure** | No receiver pollution | Safe |
+| ⚠️ | **Impure-Overwrite** | Pollutes but overwrites | Caution |
+| ☠️ | **Impure-Accumulate** | Pollutes and accumulates | Dangerous |
 
-**Pollution = Bomb Pattern**: Creating hidden state that explodes when a Finisher is called later.
+**Pure (✅)**: Method does NOT pollute the receiver.
 
+**Impure-Overwrite (⚠️)**: Method pollutes receiver, but repeated calls replace the value:
+```go
+q.Limit(10)
+q.Limit(5)   // → LIMIT 5 (overwrites, less dangerous)
+```
+
+**Impure-Accumulate (☠️)**: Method pollutes receiver, and repeated calls stack up:
+```go
+q.Where("a")
+q.Where("b") // → WHERE a AND b (accumulates, DANGEROUS!)
+```
+
+**Why this matters**: Impure-Overwrite is safer because accidental pollution can be "fixed" by calling the method again with correct value. Impure-Accumulate creates hidden bombs that explode unexpectedly.
+
+**Pollution = Bomb Pattern**:
 ```go
 // NOT pure - plants a bomb
 func addClause(db *gorm.DB) {
@@ -645,87 +664,163 @@ Add new sections:
 ```go
 import "github.com/goforj/godump"
 
-// Direct state comparison
-before := godump.Sprint(db.Statement)
+// Option 1: Direct diff comparison
+before := db.Statement
 db.Where("x")  // discard result
-after := godump.Sprint(db.Statement)
+after := db.Statement
+
+diff := godump.DiffStr(before, after)
+if diff != "" {
+    // Method polluted receiver - diff shows exactly what changed
+    fmt.Println(diff)  // Shows +/- markers for changed fields
+}
+
+// Option 2: JSON for programmatic comparison
+beforeJSON := godump.DumpJSONStr(db.Statement)
+db.Where("x")
+afterJSON := godump.DumpJSONStr(db.Statement)
+// Parse and compare specific fields
+```
+
+**Available godump APIs:**
+- `DiffStr(a, b)` - Returns diff string with +/- markers (best for quick comparison)
+- `DumpJSONStr(v)` - Returns JSON string (best for field extraction)
+- `Dump(v)` - Prints to stdout (for manual debugging)
+
+**Key option: `WithOnlyFields` - Filter to specific fields:**
+```go
+// Create dumper that only outputs relevant Statement fields
+d := godump.NewDumper(
+    godump.WithOnlyFields("Clauses", "Joins", "Preloads", "Selects", "Omits", "Table"),
+)
+
+before := d.DumpJSONStr(db.Statement)
+db.Where("x")  // discard
+after := d.DumpJSONStr(db.Statement)
 
 if before != after {
-    // Method polluted receiver - can see exactly what changed
+    // Pollution detected - only relevant fields compared
 }
 ```
+
+**Other useful options:**
+- `WithExcludeFields(...)` - Exclude specific fields (inverse of WithOnlyFields)
+- `WithMaxDepth(n)` - Limit recursion depth
+- `WithRedactFields(...)` - Hide sensitive data
 
 **Implementation Strategy:**
 
-#### Step 0: Identify Relevant Fields (Do First!)
+#### Step 0: Identify Relevant Fields (Run Once)
 
-Run godump on one version (e.g., v1.31.1) to identify which `Statement` fields matter:
+Run godump on v1.31.1 to confirm which Statement fields change on pollution:
 
 ```go
-// Test script to identify relevant fields
+// Quick test script
 db := setupDB()
 base := db.Model(&User{})
 
-fmt.Println("=== Before Where ===")
-godump.Dump(base.Statement)
-
+godump.Dump(base.Statement)  // See all fields
 base.Where("x")
-
-fmt.Println("=== After Where (discarded) ===")
-godump.Dump(base.Statement)
+godump.Dump(base.Statement)  // See what changed
 ```
 
 **Expected relevant fields in `*gorm.Statement`:**
-- `Clauses` - WHERE, ORDER BY, etc.
+- `Clauses` - WHERE, ORDER BY, GROUP BY, etc.
 - `Joins` - JOIN information
 - `Preloads` - Preload configurations
 - `Selects` / `Omits` - Column selection
-- `Table` / `Model` - Table info
-- `Dest` - Destination pointer
+- `Table` - Table name
+- `Distinct` - DISTINCT flag
 
-**Fields to IGNORE (likely noise):**
-- `DB` - Pointer to parent (circular)
+**Fields to EXCLUDE (noise):**
+- `DB` - Pointer to parent (circular ref)
 - `Context` - Context object
 - `ConnPool` - Connection pool
-- `Schema` - Cached schema (may change on first access)
-- `Settings` - sync.Map (hard to compare)
+- `Schema` - Cached schema (lazy init)
+- `Settings` - sync.Map (not comparable)
+- `Vars` - Bind variables (changes per query)
 
-#### Step 1: Create Field Extractor
+#### Step 1: Create Pollution Detector
 
 ```go
-type StatementSnapshot struct {
-    Clauses   map[string]interface{}
-    Joins     []string  // join names
-    Preloads  map[string]bool
-    Table     string
-    Selects   []string
-    Omits     []string
+var statementDumper = godump.NewDumper(
+    godump.WithOnlyFields(
+        "Clauses", "Joins", "Preloads",
+        "Selects", "Omits", "Table", "Distinct",
+    ),
+    godump.WithMaxDepth(5),  // Avoid infinite recursion
+)
+
+func isPolluted(before, after *gorm.Statement) bool {
+    return statementDumper.DumpJSONStr(before) != statementDumper.DumpJSONStr(after)
 }
 
-func snapshotStatement(stmt *gorm.Statement) StatementSnapshot {
-    // Extract only relevant fields
-    snapshot := StatementSnapshot{...}
-    return snapshot
-}
-
-func (s StatementSnapshot) Equals(other StatementSnapshot) bool {
-    return reflect.DeepEqual(s, other)
+// Or use DiffStr for detailed change report
+func pollutionDiff(before, after *gorm.Statement) string {
+    return godump.DiffStr(before, after)
 }
 ```
 
-#### Step 2: Rewrite Tests with State Comparison
+#### Step 2: Simplified Test Pattern
 
 ```go
 func testPure_Where() {
     db := setupDB()
     base := db.Model(&User{})
 
-    before := snapshotStatement(base.Statement)
-    base.Where("x")  // discard
-    after := snapshotStatement(base.Statement)
+    before := base.Statement  // Capture state
+    base.Where("x")           // Call method, discard result
+    after := base.Statement
 
-    pure := before.Equals(after)
-    // No need to execute query or check SQL!
+    pure := !isPolluted(before, after)
+    // Clean and direct - no SQL execution needed!
+}
+```
+
+#### Step 3: Detect Overwrite vs Accumulate
+
+For impure methods, determine if they overwrite or accumulate:
+
+```go
+func testAccumulation_Where() {
+    db := setupDB()
+    base := db.Model(&User{})
+
+    // First pollution
+    base.Where("first_marker")
+    state1 := statementDumper.DumpJSONStr(base.Statement)
+
+    // Second pollution with different value
+    base.Where("second_marker")
+    state2 := statementDumper.DumpJSONStr(base.Statement)
+
+    // Check: does state2 contain both markers or just second?
+    hasFirst := strings.Contains(state2, "first_marker")
+    hasSecond := strings.Contains(state2, "second_marker")
+
+    if hasFirst && hasSecond {
+        // ☠️ Impure-Accumulate: both markers present
+        return "accumulate"
+    } else if hasSecond && !hasFirst {
+        // ⚠️ Impure-Overwrite: only second marker
+        return "overwrite"
+    }
+}
+```
+
+**JSON Schema Update:**
+```json
+{
+  "methods": {
+    "Where": {
+      "pure": false,
+      "impure_mode": "accumulate"  // "accumulate" | "overwrite"
+    },
+    "Limit": {
+      "pure": false,
+      "impure_mode": "overwrite"
+    }
+  }
 }
 ```
 
