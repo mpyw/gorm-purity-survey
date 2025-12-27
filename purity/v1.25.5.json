@@ -115,6 +115,7 @@
       "name": "Joins",
       "exists": true,
       "pure": false,
+      "impure_mode": "accumulate",
       "immutable_return": false
     },
     "Last": {
@@ -126,6 +127,7 @@
       "name": "Limit",
       "exists": true,
       "pure": false,
+      "impure_mode": "overwrite",
       "immutable_return": true
     },
     "Model": {
@@ -138,12 +140,14 @@
       "name": "Not",
       "exists": true,
       "pure": false,
+      "impure_mode": "accumulate",
       "immutable_return": false
     },
     "Offset": {
       "name": "Offset",
       "exists": true,
       "pure": false,
+      "impure_mode": "overwrite",
       "immutable_return": true
     },
     "Omit": {
@@ -156,12 +160,14 @@
       "name": "Or",
       "exists": true,
       "pure": false,
+      "impure_mode": "accumulate",
       "immutable_return": false
     },
     "Order": {
       "name": "Order",
       "exists": true,
       "pure": false,
+      "impure_mode": "accumulate",
       "immutable_return": false
     },
     "Pluck": {
@@ -215,6 +221,7 @@
       "name": "Select",
       "exists": true,
       "pure": false,
+      "impure_mode": "overwrite",
       "immutable_return": true
     },
     "Session": {
@@ -262,6 +269,7 @@
       "name": "Where",
       "exists": true,
       "pure": false,
+      "impure_mode": "accumulate",
       "immutable_return": false,
       "pure_note": "Where pollutes receiver when result discarded",
       "immutable_note": "Where return value is mutable (branches interfere)"

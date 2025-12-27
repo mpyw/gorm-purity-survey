@@ -20,6 +20,7 @@ RUN cp go.mod.template go.mod
 RUN echo "replace gorm.io/gorm => gorm.io/gorm ${GORM_VERSION}" >> go.mod && \
     go get "gorm.io/gorm@${GORM_VERSION}" && \
     go get github.com/DATA-DOG/go-sqlmock && \
+    go get github.com/goforj/godump && \
     go mod tidy
 
 # Store version for runtime detection

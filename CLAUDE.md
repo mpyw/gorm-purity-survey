@@ -524,7 +524,29 @@ Basic purity tests implemented and run on all 77 versions:
 - v1.25.7: Limit/Offset became pure
 - Latest (v1.31.1): 26 pure, 21 impure methods
 
-### Phase 4: Extended Tests (TODO)
+### Phase 4: Extended Tests (In Progress)
+
+#### 4.0 Impure Mode Detection ✓ (Completed)
+
+Added `impure_mode` field to distinguish between:
+- **accumulate (☠️)**: Repeated calls stack up (dangerous!)
+- **overwrite (⚠️)**: Repeated calls replace value (less dangerous)
+
+Implemented for: Where, Or, Not, Select, Order, Joins, Limit, Offset
+
+**Cross-version Results:**
+| Method | v1.20.0 | v1.25.7+ |
+|--------|---------|----------|
+| Where | accumulate | accumulate |
+| Or | accumulate | accumulate |
+| Not | accumulate | accumulate |
+| Order | accumulate | accumulate |
+| Joins | accumulate | accumulate |
+| Select | overwrite | overwrite |
+| Limit | overwrite | *(pure)* |
+| Offset | overwrite | *(pure)* |
+
+**Key Finding**: Limit/Offset changed from impure-overwrite to pure in v1.25.7
 
 Additional test dimensions needed to catch known regressions:
 

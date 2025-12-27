@@ -65,15 +65,18 @@ type Profile struct {
 
 // MethodResult holds test results for a single method.
 type MethodResult struct {
-	Name                 string `json:"name"`
-	Exists               bool   `json:"exists"`
-	Pure                 *bool  `json:"pure,omitempty"`                   // nil if not testable
-	ImmutableReturn      *bool  `json:"immutable_return,omitempty"`       // nil if not testable
-	CallbackArgImmutable *bool  `json:"callback_arg_immutable,omitempty"` // nil if method doesn't take callback
-	PureNote             string `json:"pure_note,omitempty"`
-	ImmutableNote        string `json:"immutable_note,omitempty"`
-	CallbackNote         string `json:"callback_note,omitempty"`
-	Error                string `json:"error,omitempty"`
+	Name                   string  `json:"name"`
+	Exists                 bool    `json:"exists"`
+	Pure                   *bool   `json:"pure,omitempty"`                     // nil if not testable
+	ImpureMode             *string `json:"impure_mode,omitempty"`              // "accumulate" or "overwrite" (only if pure=false)
+	ImmutableReturn        *bool   `json:"immutable_return,omitempty"`         // nil if not testable
+	CallbackArgImmutable   *bool   `json:"callback_arg_immutable,omitempty"`   // nil if method doesn't take callback
+	FinisherPreservesJoins *bool   `json:"finisher_preserves_joins,omitempty"` // For Count: are Joins preserved after execution?
+	PureNote               string  `json:"pure_note,omitempty"`
+	ImmutableNote          string  `json:"immutable_note,omitempty"`
+	CallbackNote           string  `json:"callback_note,omitempty"`
+	FinisherNote           string  `json:"finisher_note,omitempty"`
+	Error                  string  `json:"error,omitempty"`
 }
 
 // PurityResult holds the complete purity test result.
@@ -176,6 +179,10 @@ func setupDB() (*gorm.DB, sqlmock.Sqlmock, *capture.SQLCapture, error) {
 
 func boolPtr(b bool) *bool {
 	return &b
+}
+
+func strPtr(s string) *string {
+	return &s
 }
 
 // expectAnyQuery sets up mock to accept any query.
@@ -283,6 +290,31 @@ func testWhere(result *PurityResult) {
 		m.PureNote = "Where pollutes receiver when result discarded"
 	}
 
+	// === IMPURE MODE TEST (accumulate vs overwrite) ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{})
+			// First pollution
+			base3.Where("first_marker_col = ?", 1)
+			// Second pollution with different value
+			base3.Where("second_marker_col = ?", 2)
+			// Execute
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("first_marker_col")
+			hasSecond := cap3.ContainsNormalized("second_marker_col")
+
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
+
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
 	if err != nil {
@@ -324,6 +356,27 @@ func testOr(result *PurityResult) {
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
 
+	// === IMPURE MODE TEST ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{}).Where("base = ?", true)
+			base3.Or("first_marker_col = ?", 1)
+			base3.Or("second_marker_col = ?", 2)
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("first_marker_col")
+			hasSecond := cap3.ContainsNormalized("second_marker_col")
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
+
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
 	if err != nil {
@@ -361,6 +414,27 @@ func testNot(result *PurityResult) {
 	base.Find(&users)
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+
+	// === IMPURE MODE TEST ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{})
+			base3.Not("first_marker_col = ?", 1)
+			base3.Not("second_marker_col = ?", 2)
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("first_marker_col")
+			hasSecond := cap3.ContainsNormalized("second_marker_col")
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -400,6 +474,27 @@ func testSelect(result *PurityResult) {
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 
+	// === IMPURE MODE TEST ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{})
+			base3.Select("FIRST_MARKER")
+			base3.Select("SECOND_MARKER")
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("FIRST_MARKER")
+			hasSecond := cap3.ContainsNormalized("SECOND_MARKER")
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
+
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
 	if err != nil {
@@ -437,6 +532,27 @@ func testOrder(result *PurityResult) {
 	base.Find(&users)
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+
+	// === IMPURE MODE TEST ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{})
+			base3.Order("FIRST_MARKER")
+			base3.Order("SECOND_MARKER")
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("FIRST_MARKER")
+			hasSecond := cap3.ContainsNormalized("SECOND_MARKER")
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -551,6 +667,27 @@ func testJoins(result *PurityResult) {
 	base.Find(&users)
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+
+	// === IMPURE MODE TEST ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{})
+			base3.Joins("FIRST_JOIN_MARKER")
+			base3.Joins("SECOND_JOIN_MARKER")
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("FIRST_JOIN_MARKER")
+			hasSecond := cap3.ContainsNormalized("SECOND_JOIN_MARKER")
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -693,6 +830,27 @@ func testLimit(result *PurityResult) {
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("999"))
 
+	// === IMPURE MODE TEST ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{})
+			base3.Limit(111)
+			base3.Limit(222)
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("111")
+			hasSecond := cap3.ContainsNormalized("222")
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
+
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
 	if err != nil {
@@ -730,6 +888,27 @@ func testOffset(result *PurityResult) {
 	base.Find(&users)
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("999"))
+
+	// === IMPURE MODE TEST ===
+	if m.Pure != nil && !*m.Pure {
+		db3, mock3, cap3, err := setupDB()
+		if err == nil {
+			base3 := db3.Model(&User{})
+			base3.Offset(111)
+			base3.Offset(222)
+			expectAnyQuery(mock3)
+			var users3 []User
+			base3.Find(&users3)
+
+			hasFirst := cap3.ContainsNormalized("111")
+			hasSecond := cap3.ContainsNormalized("222")
+			if hasFirst && hasSecond {
+				m.ImpureMode = strPtr("accumulate")
+			} else if hasSecond && !hasFirst {
+				m.ImpureMode = strPtr("overwrite")
+			}
+		}
+	}
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -1150,6 +1329,34 @@ func testCount(result *PurityResult) {
 	base.Where("second = ?", "clean").Count(&c2)
 
 	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+
+	// === FINISHER PRESERVES JOINS TEST ===
+	// PR #7027: Count() was clearing Joins in some versions
+	db2, mock2, cap2, err := setupDB()
+	if err != nil {
+		return
+	}
+
+	// Query with Joins
+	q := db2.Model(&User{}).Joins("JOIN_MARKER_TABLE")
+
+	// First finisher: Count
+	mock2.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(10))
+	var count int64
+	q.Count(&count)
+
+	cap2.Reset()
+
+	// Second finisher: Find - should still have JOIN
+	mock2.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
+	var users []User
+	q.Find(&users)
+
+	// Check if JOIN is preserved after Count
+	m.FinisherPreservesJoins = boolPtr(cap2.ContainsNormalized("JOIN_MARKER_TABLE"))
+	if m.FinisherPreservesJoins != nil && !*m.FinisherPreservesJoins {
+		m.FinisherNote = "BUG: Count() clears Joins (PR #7027)"
+	}
 }
 
 func testPluck(result *PurityResult) {
