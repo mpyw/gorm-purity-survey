@@ -7,15 +7,15 @@ set -e
 V1="${1:?First version required}"
 V2="${2:?Second version required}"
 
-RESULTS_DIR="results"
+METHODS_DIR="methods"
 
-if [ ! -f "${RESULTS_DIR}/${V1}.json" ]; then
-    echo "Error: ${RESULTS_DIR}/${V1}.json not found"
+if [ ! -f "${METHODS_DIR}/${V1}.json" ]; then
+    echo "Error: ${METHODS_DIR}/${V1}.json not found"
     exit 1
 fi
 
-if [ ! -f "${RESULTS_DIR}/${V2}.json" ]; then
-    echo "Error: ${RESULTS_DIR}/${V2}.json not found"
+if [ ! -f "${METHODS_DIR}/${V2}.json" ]; then
+    echo "Error: ${METHODS_DIR}/${V2}.json not found"
     exit 1
 fi
 
@@ -23,8 +23,8 @@ echo "=== Method Diff: ${V1} vs ${V2} ==="
 echo ""
 
 # Extract signatures and compare (from *gorm.DB type)
-jq -r '.types["*gorm.DB"].methods[].signature' "${RESULTS_DIR}/${V1}.json" | sort > /tmp/v1_sigs.txt
-jq -r '.types["*gorm.DB"].methods[].signature' "${RESULTS_DIR}/${V2}.json" | sort > /tmp/v2_sigs.txt
+jq -r '.types["*gorm.DB"].methods[].signature' "${METHODS_DIR}/${V1}.json" | sort > /tmp/v1_sigs.txt
+jq -r '.types["*gorm.DB"].methods[].signature' "${METHODS_DIR}/${V2}.json" | sort > /tmp/v2_sigs.txt
 
 echo "--- Only in ${V1} ---"
 comm -23 /tmp/v1_sigs.txt /tmp/v2_sigs.txt

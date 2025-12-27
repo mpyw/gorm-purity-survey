@@ -1,21 +1,21 @@
 #!/bin/bash
 # Generate Markdown report from survey JSON results
-# Usage: ./scripts/generate-markdown.sh > results/REPORT.md
+# Usage: ./scripts/generate-markdown.sh > methods/REPORT.md
 
 set -e
 
-RESULTS_DIR="${1:-results}"
-OUTPUT_FILE="${2:-results/REPORT.md}"
+METHODS_DIR="${1:-methods}"
+OUTPUT_FILE="${2:-methods/REPORT.md}"
 
 # Check if results exist
-if [ ! -d "$RESULTS_DIR" ] || [ -z "$(ls -A "$RESULTS_DIR"/*.json 2>/dev/null)" ]; then
-    echo "Error: No JSON files found in $RESULTS_DIR"
+if [ ! -d "$METHODS_DIR" ] || [ -z "$(ls -A "$METHODS_DIR"/*.json 2>/dev/null)" ]; then
+    echo "Error: No JSON files found in $METHODS_DIR"
     echo "Run ./scripts/enumerate-all.sh first"
     exit 1
 fi
 
 # Get sorted version list
-VERSIONS=$(ls "$RESULTS_DIR"/*.json 2>/dev/null | xargs -n1 basename | sed 's/.json$//' | sort -V)
+VERSIONS=$(ls "$METHODS_DIR"/*.json 2>/dev/null | xargs -n1 basename | sed 's/.json$//' | sort -V)
 VERSION_COUNT=$(echo "$VERSIONS" | wc -l | tr -d ' ')
 
 cat << 'EOF'
@@ -38,7 +38,7 @@ echo "| Version | \`*gorm.DB\` Methods | Types | Pollution Paths |"
 echo "|---------|-------------------|-------|-----------------|"
 
 for VERSION in $VERSIONS; do
-    FILE="$RESULTS_DIR/${VERSION}.json"
+    FILE="$METHODS_DIR/${VERSION}.json"
     if [ -f "$FILE" ]; then
         DB_METHODS=$(jq -r '.types["*gorm.DB"].method_count // 0' "$FILE")
         TYPE_COUNT=$(jq -r '.types | length' "$FILE")
@@ -58,7 +58,7 @@ echo ""
 PREV_COUNT=""
 PREV_VERSION=""
 for VERSION in $VERSIONS; do
-    FILE="$RESULTS_DIR/${VERSION}.json"
+    FILE="$METHODS_DIR/${VERSION}.json"
     if [ -f "$FILE" ]; then
         COUNT=$(jq -r '.types["*gorm.DB"].method_count // 0' "$FILE")
         if [ -n "$PREV_COUNT" ] && [ "$COUNT" != "$PREV_COUNT" ]; then
@@ -84,7 +84,7 @@ echo ""
 
 PREV_FILE=""
 for VERSION in $VERSIONS; do
-    FILE="$RESULTS_DIR/${VERSION}.json"
+    FILE="$METHODS_DIR/${VERSION}.json"
     if [ -f "$FILE" ]; then
         if [ -n "$PREV_FILE" ]; then
             # Extract method names and find new ones
@@ -114,7 +114,7 @@ echo ""
 # Check if any v1.30+ results exist
 for VERSION in $VERSIONS; do
     if [[ "$VERSION" =~ ^v1\.(3[0-9]|[4-9][0-9]) ]]; then
-        FILE="$RESULTS_DIR/${VERSION}.json"
+        FILE="$METHODS_DIR/${VERSION}.json"
         if [ -f "$FILE" ]; then
             echo "### $VERSION"
             echo ""
@@ -152,7 +152,7 @@ echo "Methods that can potentially pollute \`*gorm.DB\` state:"
 echo ""
 
 # Get latest version file
-LATEST_FILE="$RESULTS_DIR/$(echo "$VERSIONS" | tail -1).json"
+LATEST_FILE="$METHODS_DIR/$(echo "$VERSIONS" | tail -1).json"
 if [ -f "$LATEST_FILE" ]; then
     echo "### Chain Methods (return \`*gorm.DB\`)"
     echo ""

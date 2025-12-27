@@ -7,8 +7,8 @@
 set -e
 
 VERSION="${1:?Version required (e.g., v1.25.0)}"
-RESULTS_DIR="results"
-RESULT_FILE="${RESULTS_DIR}/${VERSION}.json"
+METHODS_DIR="methods"
+RESULT_FILE="${METHODS_DIR}/${VERSION}.json"
 MAX_RETRIES=3
 
 # Skip if already processed
