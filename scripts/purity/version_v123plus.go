@@ -40,7 +40,7 @@ func testToSQL(result *PurityResult) {
 	base.Find(&users)
 
 	// Check if marker leaks to base
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 	m.PureNote = "ToSQL generates SQL without execution"
 }
 
@@ -50,6 +50,6 @@ func testConnection(result *PurityResult) {
 
 	// Connection runs a function with a dedicated connection
 	// Hard to test pollution without actual DB
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Connection creates isolated connection context"
 }

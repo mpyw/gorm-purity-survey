@@ -28,10 +28,10 @@ for attempt in $(seq 1 $MAX_RETRIES); do
         -t "gorm-purity:${VERSION}" \
         . > /dev/null 2>&1; then
 
-        # Run purity tests
-        if docker run --rm "gorm-purity:${VERSION}" > "$RESULT_FILE" 2>&1; then
-            # Verify JSON is valid
-            if jq empty "$RESULT_FILE" 2>/dev/null; then
+        # Run purity tests (capture stdout for JSON, stderr for logs)
+        if docker run --rm "gorm-purity:${VERSION}" 2>/dev/null | sed -n '/^{/,$p' > "$RESULT_FILE"; then
+            # Verify JSON is valid and not empty
+            if [ -s "$RESULT_FILE" ] && jq empty "$RESULT_FILE" 2>/dev/null; then
                 echo "[DONE] ${VERSION} -> ${RESULT_FILE}"
                 exit 0
             fi

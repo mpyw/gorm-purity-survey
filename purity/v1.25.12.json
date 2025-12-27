@@ -25,7 +25,8 @@
     "Clauses": {
       "name": "Clauses",
       "exists": true,
-      "pure": false
+      "pure": false,
+      "return_clone": 0
     },
     "Connection": {
       "name": "Connection",
@@ -67,8 +68,9 @@
       "name": "Distinct",
       "exists": true,
       "pure": false,
-      "immutable_return": true,
-      "return_clone": 0
+      "immutable_return": false,
+      "return_clone": 0,
+      "immutable_note": "Distinct returns clone=0 (shared Statement, mutable)"
     },
     "Exec": {
       "name": "Exec",
@@ -115,7 +117,8 @@
       "name": "InnerJoins",
       "exists": true,
       "pure": false,
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Joins": {
       "name": "Joins",
@@ -234,8 +237,9 @@
       "exists": true,
       "pure": false,
       "impure_mode": "overwrite",
-      "immutable_return": true,
-      "return_clone": 0
+      "immutable_return": false,
+      "return_clone": 0,
+      "immutable_note": "Select returns clone=0 (shared Statement, mutable)"
     },
     "Session": {
       "name": "Session",
@@ -303,8 +307,8 @@
     "total_methods": 46,
     "pure_methods": 25,
     "impure_methods": 21,
-    "immutable_count": 9,
-    "mutable_count": 10,
+    "immutable_count": 7,
+    "mutable_count": 12,
     "callback_immutable": 1,
     "callback_mutable": 0
   }

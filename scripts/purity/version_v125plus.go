@@ -25,6 +25,9 @@ func testInnerJoins(result *PurityResult) {
 		return
 	}
 
+	// Record clone value
+	m.ReturnClone = ptr(getCloneValue(db.InnerJoins("test")))
+
 	// MUTABLE base - no Session()
 	base := db.Model(&User{})
 	base.InnerJoins("POLLUTION_MARKER")
@@ -32,7 +35,7 @@ func testInnerJoins(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -50,5 +53,9 @@ func testInnerJoins(result *PurityResult) {
 	var r2 []User
 	q.InnerJoins("BRANCH_TWO").Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("BRANCH_ONE"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("BRANCH_ONE"))
+
+	// Note: #7594 (InnerJoins+Preload duplicate JOIN) requires nested relations
+	// which are complex to set up with sqlmock. The issue is tracked but not
+	// automatically tested here. Manual verification recommended for v1.25.12+
 }

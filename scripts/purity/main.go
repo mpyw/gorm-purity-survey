@@ -180,16 +180,9 @@ func setupDB() (*gorm.DB, sqlmock.Sqlmock, *capture.SQLCapture, error) {
 	return gormDB, mock, cap, nil
 }
 
-func boolPtr(b bool) *bool {
-	return &b
-}
-
-func strPtr(s string) *string {
-	return &s
-}
-
-func intPtr(i int) *int {
-	return &i
+// ptr returns a pointer to the given value (generic helper).
+func ptr[T any](v T) *T {
+	return &v
 }
 
 // getCloneValue extracts the unexported clone field from *gorm.DB
@@ -296,7 +289,7 @@ func testWhere(result *PurityResult) {
 
 	// Record clone value of returned *gorm.DB
 	returnedDB := db.Where("test = ?", 1)
-	m.ReturnClone = intPtr(getCloneValue(returnedDB))
+	m.ReturnClone = ptr(getCloneValue(returnedDB))
 
 	// MUTABLE base - no Session()
 	base := db.Model(&User{}).Where("base_cond = ?", true)
@@ -307,7 +300,7 @@ func testWhere(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 	if m.Pure != nil && !*m.Pure {
 		m.PureNote = "Where pollutes receiver when result discarded"
 	}
@@ -330,9 +323,9 @@ func testWhere(result *PurityResult) {
 			hasSecond := cap3.ContainsNormalized("second_marker_col")
 
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
@@ -353,7 +346,7 @@ func testWhere(result *PurityResult) {
 	var r2 []User
 	q.Where("branch_two_col = ?", true).Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("branch_one_col"))
 	if m.ImmutableReturn != nil && !*m.ImmutableReturn {
 		m.ImmutableNote = "Where return value is mutable (branches interfere)"
 	}
@@ -371,7 +364,7 @@ func testOr(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Or("test = ?", 1)))
+	m.ReturnClone = ptr(getCloneValue(db.Or("test = ?", 1)))
 
 	base := db.Model(&User{}).Where("active = ?", true)
 	base.Or("pollution_marker_col = ?", true)
@@ -379,7 +372,7 @@ func testOr(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 
 	// === IMPURE MODE TEST ===
 	if m.Pure != nil && !*m.Pure {
@@ -395,9 +388,9 @@ func testOr(result *PurityResult) {
 			hasFirst := cap3.ContainsNormalized("first_marker_col")
 			hasSecond := cap3.ContainsNormalized("second_marker_col")
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
@@ -418,7 +411,7 @@ func testOr(result *PurityResult) {
 	var r2 []User
 	q.Or("branch_two_col = ?", true).Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("branch_one_col"))
 }
 
 func testNot(result *PurityResult) {
@@ -433,7 +426,7 @@ func testNot(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Not("test = ?", 1)))
+	m.ReturnClone = ptr(getCloneValue(db.Not("test = ?", 1)))
 
 	base := db.Model(&User{})
 	base.Not("pollution_marker_col = ?", true)
@@ -441,7 +434,7 @@ func testNot(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 
 	// === IMPURE MODE TEST ===
 	if m.Pure != nil && !*m.Pure {
@@ -457,9 +450,9 @@ func testNot(result *PurityResult) {
 			hasFirst := cap3.ContainsNormalized("first_marker_col")
 			hasSecond := cap3.ContainsNormalized("second_marker_col")
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
@@ -480,7 +473,7 @@ func testNot(result *PurityResult) {
 	var r2 []User
 	q.Not("branch_two_col = ?", true).Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("branch_one_col"))
 }
 
 func testSelect(result *PurityResult) {
@@ -495,7 +488,7 @@ func testSelect(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Select("id")))
+	m.ReturnClone = ptr(getCloneValue(db.Select("id")))
 
 	base := db.Model(&User{})
 	base.Select("POLLUTION_MARKER")
@@ -503,7 +496,7 @@ func testSelect(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 
 	// === IMPURE MODE TEST ===
 	if m.Pure != nil && !*m.Pure {
@@ -519,30 +512,25 @@ func testSelect(result *PurityResult) {
 			hasFirst := cap3.ContainsNormalized("FIRST_MARKER")
 			hasSecond := cap3.ContainsNormalized("SECOND_MARKER")
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
 
 	// === IMMUTABLE-RETURN TEST ===
-	db2, mock2, cap2, err := setupDB()
-	if err != nil {
-		return
+	// For overwrite methods like Select, the standard branch test doesn't work
+	// because the second call overwrites the first, masking mutation.
+	// Instead, infer immutability from clone value:
+	// - clone >= 1: Creates new Statement (immutable)
+	// - clone == 0: Shares Statement (mutable)
+	if m.ReturnClone != nil {
+		m.ImmutableReturn = ptr(*m.ReturnClone >= 1)
+		if *m.ReturnClone == 0 {
+			m.ImmutableNote = "Select returns clone=0 (shared Statement, mutable)"
+		}
 	}
-
-	q := db2.Model(&User{}).Select("id")
-	mock2.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
-	var r1 []User
-	q.Select("BRANCH_ONE").Find(&r1)
-
-	cap2.Reset()
-	mock2.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
-	var r2 []User
-	q.Select("BRANCH_TWO").Find(&r2)
-
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("BRANCH_ONE"))
 }
 
 func testOrder(result *PurityResult) {
@@ -557,7 +545,7 @@ func testOrder(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Order("id")))
+	m.ReturnClone = ptr(getCloneValue(db.Order("id")))
 
 	base := db.Model(&User{})
 	base.Order("POLLUTION_MARKER")
@@ -565,7 +553,7 @@ func testOrder(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 
 	// === IMPURE MODE TEST ===
 	if m.Pure != nil && !*m.Pure {
@@ -581,9 +569,9 @@ func testOrder(result *PurityResult) {
 			hasFirst := cap3.ContainsNormalized("FIRST_MARKER")
 			hasSecond := cap3.ContainsNormalized("SECOND_MARKER")
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
@@ -604,7 +592,7 @@ func testOrder(result *PurityResult) {
 	var r2 []User
 	q.Order("BRANCH_TWO").Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("BRANCH_ONE"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("BRANCH_ONE"))
 }
 
 func testGroup(result *PurityResult) {
@@ -619,7 +607,7 @@ func testGroup(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Group("id")))
+	m.ReturnClone = ptr(getCloneValue(db.Group("id")))
 
 	base := db.Model(&User{})
 	base.Group("POLLUTION_MARKER")
@@ -627,7 +615,7 @@ func testGroup(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -645,7 +633,7 @@ func testGroup(result *PurityResult) {
 	var r2 []User
 	q.Group("BRANCH_TWO").Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("BRANCH_ONE"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("BRANCH_ONE"))
 }
 
 func testHaving(result *PurityResult) {
@@ -660,7 +648,7 @@ func testHaving(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Having("count(*) > ?", 0)))
+	m.ReturnClone = ptr(getCloneValue(db.Having("count(*) > ?", 0)))
 
 	base := db.Model(&User{}).Group("role")
 	base.Having("pollution_marker_col > ?", 0)
@@ -668,7 +656,7 @@ func testHaving(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -686,7 +674,7 @@ func testHaving(result *PurityResult) {
 	var r2 []User
 	q.Having("branch_two_col > ?", 0).Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("branch_one_col"))
 }
 
 func testJoins(result *PurityResult) {
@@ -701,7 +689,7 @@ func testJoins(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Joins("test")))
+	m.ReturnClone = ptr(getCloneValue(db.Joins("test")))
 
 	base := db.Model(&User{})
 	base.Joins("POLLUTION_MARKER")
@@ -709,7 +697,7 @@ func testJoins(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 
 	// === IMPURE MODE TEST ===
 	if m.Pure != nil && !*m.Pure {
@@ -725,9 +713,9 @@ func testJoins(result *PurityResult) {
 			hasFirst := cap3.ContainsNormalized("FIRST_JOIN_MARKER")
 			hasSecond := cap3.ContainsNormalized("SECOND_JOIN_MARKER")
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
@@ -748,7 +736,7 @@ func testJoins(result *PurityResult) {
 	var r2 []User
 	q.Joins("BRANCH_TWO").Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("BRANCH_ONE"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("BRANCH_ONE"))
 }
 
 func testPreload(result *PurityResult) {
@@ -757,7 +745,7 @@ func testPreload(result *PurityResult) {
 
 	// Preload modifies Statement.Preloads, not directly visible in main SQL
 	// The callback test is the critical one for detecting v1.30.0 regression
-	m.Pure = boolPtr(true) // Assume pure for now, callback test is more important
+	m.Pure = ptr(true) // Assume pure for now, callback test is more important
 	m.PureNote = "Preload modifies Statement.Preloads (not visible in main SQL)"
 
 	// === CALLBACK ARG IMMUTABILITY TEST ===
@@ -818,8 +806,8 @@ func testPreloadCallbackImmutability(result *PurityResult, m *MethodResult) {
 	// If second execution has MORE markers than first, callback arg accumulates (BUG!)
 	// Normal: first=1, second=1
 	// Bug: first=1, second=2 (or more)
-	m.CallbackArgImmutable = boolPtr(secondMarkerCount <= firstMarkerCount)
-	m.CallbackClone = intPtr(callbackClone)
+	m.CallbackArgImmutable = ptr(secondMarkerCount <= firstMarkerCount)
+	m.CallbackClone = ptr(callbackClone)
 
 	if callbackClone == 0 {
 		m.CallbackNote = fmt.Sprintf("BUG #7662: Preload callback clone=0 (first=%d, second=%d markers)", firstMarkerCount, secondMarkerCount)
@@ -840,7 +828,7 @@ func testDistinct(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Distinct("id")))
+	m.ReturnClone = ptr(getCloneValue(db.Distinct("id")))
 
 	base := db.Model(&User{})
 	base.Distinct("POLLUTION_MARKER")
@@ -848,25 +836,17 @@ func testDistinct(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER") && !cap.ContainsNormalized("DISTINCT"))
+	// Check if DISTINCT keyword appears (indicates pollution)
+	m.Pure = ptr(!cap.ContainsNormalized("DISTINCT"))
 
 	// === IMMUTABLE-RETURN TEST ===
-	db2, mock2, cap2, err := setupDB()
-	if err != nil {
-		return
+	// Distinct is an overwrite method - infer from clone value
+	if m.ReturnClone != nil {
+		m.ImmutableReturn = ptr(*m.ReturnClone >= 1)
+		if *m.ReturnClone == 0 {
+			m.ImmutableNote = "Distinct returns clone=0 (shared Statement, mutable)"
+		}
 	}
-
-	q := db2.Model(&User{}).Distinct("id")
-	mock2.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
-	var r1 []User
-	q.Distinct("BRANCH_ONE").Find(&r1)
-
-	cap2.Reset()
-	mock2.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
-	var r2 []User
-	q.Distinct("BRANCH_TWO").Find(&r2)
-
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("BRANCH_ONE"))
 }
 
 func testLimit(result *PurityResult) {
@@ -886,7 +866,7 @@ func testLimit(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("999"))
+	m.Pure = ptr(!cap.ContainsNormalized("999"))
 
 	// === IMPURE MODE TEST ===
 	if m.Pure != nil && !*m.Pure {
@@ -902,9 +882,9 @@ func testLimit(result *PurityResult) {
 			hasFirst := cap3.ContainsNormalized("111")
 			hasSecond := cap3.ContainsNormalized("222")
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
@@ -925,7 +905,7 @@ func testLimit(result *PurityResult) {
 	var r2 []User
 	q.Limit(222).Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("111"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("111"))
 }
 
 func testOffset(result *PurityResult) {
@@ -945,7 +925,7 @@ func testOffset(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("999"))
+	m.Pure = ptr(!cap.ContainsNormalized("999"))
 
 	// === IMPURE MODE TEST ===
 	if m.Pure != nil && !*m.Pure {
@@ -961,9 +941,9 @@ func testOffset(result *PurityResult) {
 			hasFirst := cap3.ContainsNormalized("111")
 			hasSecond := cap3.ContainsNormalized("222")
 			if hasFirst && hasSecond {
-				m.ImpureMode = strPtr("accumulate")
+				m.ImpureMode = ptr("accumulate")
 			} else if hasSecond && !hasFirst {
-				m.ImpureMode = strPtr("overwrite")
+				m.ImpureMode = ptr("overwrite")
 			}
 		}
 	}
@@ -984,7 +964,7 @@ func testOffset(result *PurityResult) {
 	var r2 []User
 	q.Offset(222).Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("111"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("111"))
 }
 
 func testOmit(result *PurityResult) {
@@ -992,7 +972,7 @@ func testOmit(result *PurityResult) {
 	defer func() { result.Methods["Omit"] = m }()
 
 	// Omit modifies Statement.Omit, hard to verify via SQL
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Omit modifies Statement.Omit (hard to verify via SQL)"
 }
 
@@ -1008,7 +988,7 @@ func testModel(result *PurityResult) {
 	}
 
 	// Record clone value of returned *gorm.DB
-	m.ReturnClone = intPtr(getCloneValue(db.Model(&User{})))
+	m.ReturnClone = ptr(getCloneValue(db.Model(&User{})))
 
 	base := db.Where("base = ?", true)
 	base.Model(&User{})
@@ -1017,7 +997,7 @@ func testModel(result *PurityResult) {
 	base.Find(&result2)
 
 	// Model sets the table name - check if "users" leaked
-	m.Pure = boolPtr(!cap.ContainsNormalized("users"))
+	m.Pure = ptr(!cap.ContainsNormalized("users"))
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -1036,7 +1016,7 @@ func testModel(result *PurityResult) {
 	var users []User
 	q.Find(&users)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("other_model"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("other_model"))
 }
 
 func testTable(result *PurityResult) {
@@ -1051,7 +1031,7 @@ func testTable(result *PurityResult) {
 	}
 
 	// Record clone value
-	m.ReturnClone = intPtr(getCloneValue(db.Table("test")))
+	m.ReturnClone = ptr(getCloneValue(db.Table("test")))
 
 	base := db.Where("base = ?", true)
 	base.Table("POLLUTION_TABLE")
@@ -1059,7 +1039,7 @@ func testTable(result *PurityResult) {
 	var result2 []map[string]interface{}
 	base.Find(&result2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_TABLE"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_TABLE"))
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -1077,7 +1057,7 @@ func testTable(result *PurityResult) {
 	var r2 []map[string]interface{}
 	q.Table("BRANCH_TWO").Find(&r2)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("BRANCH_ONE"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("BRANCH_ONE"))
 }
 
 func testUnscoped(result *PurityResult) {
@@ -1085,7 +1065,7 @@ func testUnscoped(result *PurityResult) {
 	defer func() { result.Methods["Unscoped"] = m }()
 
 	// Unscoped affects soft delete behavior - need soft delete model to test properly
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Unscoped requires soft delete model to test"
 }
 
@@ -1100,13 +1080,16 @@ func testClauses(result *PurityResult) {
 		return
 	}
 
+	// Record clone value
+	m.ReturnClone = ptr(getCloneValue(db.Clauses(clause.OrderBy{})))
+
 	base := db.Model(&User{})
 	base.Clauses(clause.OrderBy{Columns: []clause.OrderByColumn{{Column: clause.Column{Name: "POLLUTION_MARKER"}}}})
 	expectAnyQuery(mock)
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 }
 
 func testScopes(result *PurityResult) {
@@ -1121,7 +1104,7 @@ func testScopes(result *PurityResult) {
 	}
 
 	// Record clone values
-	m.ReturnClone = intPtr(getCloneValue(db.Scopes(func(d *gorm.DB) *gorm.DB { return d })))
+	m.ReturnClone = ptr(getCloneValue(db.Scopes(func(d *gorm.DB) *gorm.DB { return d })))
 
 	// Callback clone value (CRITICAL for callback isolation)
 	var callbackClone int = -1
@@ -1132,7 +1115,7 @@ func testScopes(result *PurityResult) {
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	var dummy []User
 	db.Model(&User{}).Find(&dummy) // trigger callback execution
-	m.CallbackClone = intPtr(callbackClone)
+	m.CallbackClone = ptr(callbackClone)
 
 	pollutingScope := func(db *gorm.DB) *gorm.DB {
 		return db.Where("pollution_marker_col = ?", true)
@@ -1144,7 +1127,7 @@ func testScopes(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 
 	// === IMMUTABLE-RETURN TEST ===
 	db2, mock2, cap2, err := setupDB()
@@ -1163,16 +1146,8 @@ func testScopes(result *PurityResult) {
 	mock2.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
 	q.Scopes(scope2).Find(&users)
 
-	m.ImmutableReturn = boolPtr(!cap2.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap2.ContainsNormalized("branch_one_col"))
 
-	// === CALLBACK ARG ISOLATION TEST ===
-	testScopesCallbackIsolation(result, &m)
-}
-
-func testScopesCallbackIsolation(_ *PurityResult, _ *MethodResult) {
-	// Test if scope function's *gorm.DB is isolated from parent
-	// This is a secondary test - Scopes returns a new *gorm.DB, so this should be safe
-	// The main test is the pure/immutable-return test above
 }
 
 func testRaw(result *PurityResult) {
@@ -1192,14 +1167,14 @@ func testRaw(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 }
 
 func testAttrs(result *PurityResult) {
 	m := MethodResult{Name: "Attrs", Exists: true}
 	defer func() { result.Methods["Attrs"] = m }()
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Attrs modifies Statement.Attrs (used with FirstOrCreate/FirstOrInit)"
 }
 
@@ -1207,7 +1182,7 @@ func testAssign(result *PurityResult) {
 	m := MethodResult{Name: "Assign", Exists: true}
 	defer func() { result.Methods["Assign"] = m }()
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Assign modifies Statement.Assigns (used with FirstOrCreate/FirstOrInit)"
 }
 
@@ -1221,11 +1196,11 @@ func testSession(result *PurityResult) {
 
 	// === CLONE VALUE ===
 	db0, _, _, _ := setupDB()
-	m.ReturnClone = intPtr(getCloneValue(db0.Session(&gorm.Session{})))
+	m.ReturnClone = ptr(getCloneValue(db0.Session(&gorm.Session{})))
 
 	// === PURE TEST ===
 	// Session itself doesn't pollute, it creates a new instance
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Session creates new instance"
 
 	// === IMMUTABLE-RETURN TEST (CRITICAL) ===
@@ -1247,7 +1222,7 @@ func testSession(result *PurityResult) {
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
 	q.Model(&User{}).Where("branch_two_col = ?", true).Find(&users)
 
-	m.ImmutableReturn = boolPtr(!cap.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap.ContainsNormalized("branch_one_col"))
 	if m.ImmutableReturn != nil && !*m.ImmutableReturn {
 		m.ImmutableNote = "CRITICAL BUG: Session should return immutable!"
 	}
@@ -1258,9 +1233,9 @@ func testWithContext(result *PurityResult) {
 	defer func() { result.Methods["WithContext"] = m }()
 
 	db, mock, cap, _ := setupDB()
-	m.ReturnClone = intPtr(getCloneValue(db.WithContext(db.Statement.Context)))
+	m.ReturnClone = ptr(getCloneValue(db.WithContext(db.Statement.Context)))
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "WithContext creates new instance"
 
 	// === IMMUTABLE-RETURN TEST ===
@@ -1274,7 +1249,7 @@ func testWithContext(result *PurityResult) {
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
 	q.Model(&User{}).Where("branch_two_col = ?", true).Find(&users)
 
-	m.ImmutableReturn = boolPtr(!cap.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap.ContainsNormalized("branch_one_col"))
 	if m.ImmutableReturn != nil && *m.ImmutableReturn {
 		m.ImmutableNote = "WithContext returns immutable (like Session)"
 	}
@@ -1285,9 +1260,9 @@ func testDebug(result *PurityResult) {
 	defer func() { result.Methods["Debug"] = m }()
 
 	db, mock, cap, _ := setupDB()
-	m.ReturnClone = intPtr(getCloneValue(db.Debug()))
+	m.ReturnClone = ptr(getCloneValue(db.Debug()))
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Debug creates new instance"
 
 	// === IMMUTABLE-RETURN TEST ===
@@ -1301,7 +1276,7 @@ func testDebug(result *PurityResult) {
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
 	q.Model(&User{}).Where("branch_two_col = ?", true).Find(&users)
 
-	m.ImmutableReturn = boolPtr(!cap.ContainsNormalized("branch_one_col"))
+	m.ImmutableReturn = ptr(!cap.ContainsNormalized("branch_one_col"))
 	if m.ImmutableReturn != nil && *m.ImmutableReturn {
 		m.ImmutableNote = "Debug returns immutable (like Session)"
 	}
@@ -1312,16 +1287,26 @@ func testBegin(result *PurityResult) {
 	defer func() { result.Methods["Begin"] = m }()
 
 	db, _, _, _ := setupDB()
-	m.ReturnClone = intPtr(getCloneValue(db.Begin()))
+	m.ReturnClone = ptr(getCloneValue(db.Begin()))
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Begin creates new transaction instance"
-	m.ImmutableReturn = boolPtr(true)
-	m.ImmutableNote = "Begin returns new transaction (immutable)"
+
+	// Infer immutability from clone value
+	// Begin's clone changed: v1.20.0~v1.23.1 was clone=2, v1.23.2+ is clone=1
+	if m.ReturnClone != nil {
+		m.ImmutableReturn = ptr(*m.ReturnClone >= 1)
+		if *m.ReturnClone >= 1 {
+			m.ImmutableNote = "Begin returns new transaction (immutable)"
+		}
+	}
 }
 
 // === Finisher Tests ===
-// Finishers execute queries. We test if they pollute the receiver.
+// Note: These tests use the pattern base.Where(marker).Finisher() then base.Finisher()
+// This effectively tests chain method (Where) purity through finisher usage.
+// True finisher-only purity is hard to test via SQL since finishers don't add clauses.
+// The tests verify: "After using base.Where().Finisher(), is base still clean?"
 
 func testFind(result *PurityResult) {
 	m := MethodResult{Name: "Find", Exists: true}
@@ -1346,7 +1331,7 @@ func testFind(result *PurityResult) {
 	var r2 []User
 	base.Where("second = ?", "clean").Find(&r2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testFirst(result *PurityResult) {
@@ -1372,7 +1357,7 @@ func testFirst(result *PurityResult) {
 	var r2 User
 	base.Where("second = ?", "clean").First(&r2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testTake(result *PurityResult) {
@@ -1398,7 +1383,7 @@ func testTake(result *PurityResult) {
 	var r2 User
 	base.Where("second = ?", "clean").Take(&r2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testLast(result *PurityResult) {
@@ -1424,7 +1409,7 @@ func testLast(result *PurityResult) {
 	var r2 User
 	base.Where("second = ?", "clean").Last(&r2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testCount(result *PurityResult) {
@@ -1450,7 +1435,7 @@ func testCount(result *PurityResult) {
 	var c2 int64
 	base.Where("second = ?", "clean").Count(&c2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 
 	// === FINISHER PRESERVES JOINS TEST ===
 	// PR #7027: Count() was clearing Joins in some versions
@@ -1475,7 +1460,7 @@ func testCount(result *PurityResult) {
 	q.Find(&users)
 
 	// Check if JOIN is preserved after Count
-	m.FinisherPreservesJoins = boolPtr(cap2.ContainsNormalized("JOIN_MARKER_TABLE"))
+	m.FinisherPreservesJoins = ptr(cap2.ContainsNormalized("JOIN_MARKER_TABLE"))
 	if m.FinisherPreservesJoins != nil && !*m.FinisherPreservesJoins {
 		m.FinisherNote = "BUG: Count() clears Joins (PR #7027)"
 	}
@@ -1504,7 +1489,7 @@ func testPluck(result *PurityResult) {
 	var names2 []string
 	base.Where("second = ?", "clean").Pluck("name", &names2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testScan(result *PurityResult) {
@@ -1513,7 +1498,7 @@ func testScan(result *PurityResult) {
 
 	// Scan is similar to Find - it's a finisher
 	// Testing from mutable base like other finishers
-	m.Pure = boolPtr(true) // Assume same behavior as Find
+	m.Pure = ptr(true) // Assume same behavior as Find
 	m.PureNote = "Scan behaves similarly to Find (finisher)"
 }
 
@@ -1522,7 +1507,7 @@ func testRow(result *PurityResult) {
 	defer func() { result.Methods["Row"] = m }()
 
 	// Row is a finisher that returns a single *sql.Row
-	m.Pure = boolPtr(true) // Assume same behavior as Find
+	m.Pure = ptr(true) // Assume same behavior as Find
 	m.PureNote = "Row behaves similarly to Find (finisher)"
 }
 
@@ -1531,7 +1516,7 @@ func testRows(result *PurityResult) {
 	defer func() { result.Methods["Rows"] = m }()
 
 	// Rows is a finisher that returns *sql.Rows
-	m.Pure = boolPtr(true) // Assume same behavior as Find
+	m.Pure = ptr(true) // Assume same behavior as Find
 	m.PureNote = "Rows behaves similarly to Find (finisher)"
 }
 
@@ -1556,14 +1541,14 @@ func testCreate(result *PurityResult) {
 	mock.ExpectExec(".*").WillReturnResult(sqlmock.NewResult(2, 1))
 	base.Where("second = ?", "clean").Create(&User{Name: "test2"})
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testSave(result *PurityResult) {
 	m := MethodResult{Name: "Save", Exists: true}
 	defer func() { result.Methods["Save"] = m }()
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "Save behavior is complex (upsert), assumed pure"
 }
 
@@ -1588,7 +1573,7 @@ func testUpdate(result *PurityResult) {
 	mock.ExpectExec(".*").WillReturnResult(sqlmock.NewResult(0, 1))
 	base.Where("second = ?", "clean").Update("name", "updated2")
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testUpdates(result *PurityResult) {
@@ -1612,7 +1597,7 @@ func testUpdates(result *PurityResult) {
 	mock.ExpectExec(".*").WillReturnResult(sqlmock.NewResult(0, 1))
 	base.Where("second = ?", "clean").Updates(map[string]interface{}{"name": "updated2"})
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testDelete(result *PurityResult) {
@@ -1636,7 +1621,7 @@ func testDelete(result *PurityResult) {
 	mock.ExpectExec(".*").WillReturnResult(sqlmock.NewResult(0, 1))
 	base.Where("second = ?", "clean").Delete(&User{})
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testExec(result *PurityResult) {
@@ -1660,14 +1645,14 @@ func testExec(result *PurityResult) {
 	mock.ExpectExec(".*").WillReturnResult(sqlmock.NewResult(0, 1))
 	base.Exec("UPDATE users SET name = ? WHERE id = ?", "test", 2)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("pollution_marker_col"))
+	m.Pure = ptr(!cap.ContainsNormalized("pollution_marker_col"))
 }
 
 func testFirstOrCreate(result *PurityResult) {
 	m := MethodResult{Name: "FirstOrCreate", Exists: true}
 	defer func() { result.Methods["FirstOrCreate"] = m }()
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "FirstOrCreate behavior is complex, assumed pure"
 }
 
@@ -1675,6 +1660,6 @@ func testFirstOrInit(result *PurityResult) {
 	m := MethodResult{Name: "FirstOrInit", Exists: true}
 	defer func() { result.Methods["FirstOrInit"] = m }()
 
-	m.Pure = boolPtr(true)
+	m.Pure = ptr(true)
 	m.PureNote = "FirstOrInit behavior is complex, assumed pure"
 }

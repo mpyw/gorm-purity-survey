@@ -26,6 +26,6 @@ func testMapColumns(result *PurityResult) {
 	var users []User
 	base.Find(&users)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 	m.PureNote = "MapColumns modifies column mapping"
 }

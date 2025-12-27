@@ -38,5 +38,5 @@ func testCreateInBatches(result *PurityResult) {
 	users2 := []User{{Name: "test3"}, {Name: "test4"}}
 	base.Where("second = ?", "clean").CreateInBatches(&users2, 10)
 
-	m.Pure = boolPtr(!cap.ContainsNormalized("POLLUTION_MARKER"))
+	m.Pure = ptr(!cap.ContainsNormalized("POLLUTION_MARKER"))
 }
