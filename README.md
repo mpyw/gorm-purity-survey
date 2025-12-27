@@ -2,156 +2,151 @@
 
 **Survey documenting GORM's breaking changes in `*gorm.DB` method behavior across patch versions.**
 
+## Quick Links
+
+- **[USAGE_GUIDE.md](./USAGE_GUIDE.md)** - Practical guide: "Which version breaks with what pattern?"
+- **[purity/REPORT.md](./purity/REPORT.md)** - Full purity survey results
+- **[methods/REPORT.md](./methods/REPORT.md)** - Method enumeration by version
+
 ## Purpose
 
-This project exists to **raise awareness** about GORM's unstable API behavior:
+This project **documents and publicizes** GORM's unstable API behavior:
 
-- Breaking changes occur in **PATCH versions** (e.g., v1.25.3 → v1.25.4)
+- Breaking changes occur in **PATCH versions** (e.g., v1.25.11 → v1.25.12)
 - Method semantics (pure/impure, mutable/immutable) change without notice
 - No clear documentation of these behavioral changes
 
-This is **NOT** about fixing [gormreuse](https://github.com/mpyw/gormreuse) — that linter already errs on the safe side. This survey serves as **evidence** of GORM's dangerous versioning practices.
+This survey serves as **evidence** of GORM's dangerous versioning practices.
 
 ## The Problem
 
-GORM's shallow clone behavior has changed multiple times:
+GORM's method behavior has changed multiple times across patch versions:
 
 ```go
 // This code's behavior depends on which GORM version you're using:
 q := db.Where("active = ?", true)
 q.Where("role = ?", "admin").Find(&admins)
-q.Where("role = ?", "user").Find(&users)  // Does this include "admin" condition? DEPENDS ON VERSION.
+q.Where("role = ?", "user").Find(&users)  // Does this include "admin"? DEPENDS ON VERSION.
 ```
 
-The answer varies by patch version. This is unacceptable for a database library.
+## Key Findings
 
-## Findings
+### Version-Specific Breaking Changes
 
-> **TODO**: This section will be populated with survey results.
+| Version | Change | Impact |
+|---------|--------|--------|
+| **v1.20.7** | Session clone: 1→2 | Session() now fully isolates |
+| **v1.20.8** | Preload callback clone: 1→2 | Preload callbacks now isolate |
+| **v1.21.8** | Delete/Update became pure | Safe to discard return values |
+| **v1.23.2** | Begin clone: 2→1 | Begin() less isolated than Session() |
+| **v1.25.7** | Limit/Offset became pure | Safe to discard return values |
+| **v1.30.0** | **Preload callback clone: 2→0** | **REGRESSION: #7662** |
 
-Expected format:
-- List of methods with changed behavior
-- Version ranges where each behavior applies
-- Specific breaking change examples
+### Purity Classification
+
+Based on testing all 77 versions (v1.20.0 ~ v1.31.1):
+
+| Category | Symbol | Count (v1.31.1) |
+|----------|--------|-----------------|
+| Pure | ✅ | 26 methods |
+| Impure-Accumulate | ☠️ | ~15 methods |
+| Impure-Overwrite | ⚠️ | ~6 methods |
+
+**Impure-Accumulate (dangerous)**: `Where`, `Or`, `Not`, `Order`, `Joins`
+**Impure-Overwrite (less dangerous)**: `Select`, `Distinct`
+
+### The Golden Rule
+
+**Always call `Session(&gorm.Session{})` before branching a `*gorm.DB`.**
+
+```go
+// SAFE in all versions
+base := db.Session(&gorm.Session{})
+base.Where("x").Find(&r1)  // OK
+base.Where("y").Find(&r2)  // OK - no interference
+```
+
+See [USAGE_GUIDE.md](./USAGE_GUIDE.md) for detailed patterns.
 
 ## Survey Scope
 
-- **Versions**: v1.20.0 ~ v1.31.1 (latest)
+- **Versions**: 77 versions (v1.20.0 ~ v1.31.1)
 - **Target**: All public methods of `*gorm.DB`
+- **Tests**: Pure classification, immutable-return, callback isolation
 
-## Survey Criteria
+## Survey Results
 
-### 1. Pure Classification
+### Method Enumeration (methods/)
 
-A method is **pure** if calling it does not "pollute" the `*gorm.DB` argument or receiver.
+| Version | `*gorm.DB` Methods |
+|---------|-------------------|
+| v1.20.0 | 70 |
+| v1.21.0 | 73 |
+| v1.25.11 | 76 |
+| v1.31.1 | 77 |
 
-**Definition of "pollution"**:
-- Chain methods like `Where()`, `Clauses()` add conditions to the shared `Statement` — harmless by themselves
-- But when a Finisher like `Find()` is called, it triggers all accumulated conditions
-- If the `Statement` is shared across branches, conditions from one branch leak into another
+New methods added: `CreateInBatches` (v1.20.7), `ToSQL` (v1.22.3), `Connection` (v1.22.5), `InnerJoins` (v1.24.3), `MapColumns` (v1.25.11)
 
-```go
-q := db.Where("x")
-q.Where("a").Find(&admins)  // Find() triggers "x" + "a"
-q.Where("b").Find(&users)   // Find() triggers "x" + "a" + "b" — BOOM!
-//                             Expected only "x" + "b"
-```
+### Purity Test Results (purity/)
 
-### 2. Immutable-Return Classification
+Full results in [purity/REPORT.md](./purity/REPORT.md), including:
+- Per-method pure/impure status by version
+- Clone values (0/1/2) for return values and callbacks
+- Impure mode (accumulate vs overwrite)
+- Version-specific regressions
 
-A method is **immutable-return** if the returned `*gorm.DB` is reusable (safe to branch into multiple code paths).
-
-- `Session()`, `WithContext()`, `Debug()` qualify
-- Criteria: whether a new `Statement` is created internally
-
-### 3. Method Introduction Version
-
-Record which version each method was first introduced.
-
-### 4. interface{} Argument Coverage
-
-Methods accepting `interface{}` may have expanded their supported patterns over time. Requires thorough investigation.
-
-## Survey Methodology
-
-### Phase 1: Method Enumeration
-
-List all public methods of `*gorm.DB` from the latest version.
-
-### Phase 2: Source Code Analysis (using Kiri)
-
-Analyze GORM source to understand each method's behavior statically.
-
-### Phase 3: Bisect for Change Detection
-
-For each method, use bisect to identify versions where behavior changed.
-
-```
-v1.20 ... v1.25 ... v1.31
-    ↓ bisect
-Identify change points
-```
-
-### Phase 4: Runtime Test Verification
-
-Use Docker to run parallel tests across multiple versions.
-
-## Directory Structure (Planned)
+## Directory Structure
 
 ```
 gorm-purity-survey/
-├── README.md
-├── go.mod
-├── Dockerfile
-├── docker-compose.yml          # Parallel multi-version execution
+├── README.md              # This file
+├── USAGE_GUIDE.md         # Practical usage patterns guide
+├── CLAUDE.md              # Development instructions
 │
-├── methods/                     # Method definitions
-│   └── methods.go              # List of methods to survey
+├── methods/               # Method enumeration results
+│   ├── REPORT.md         # Summary report
+│   └── v*.json           # Per-version method lists
 │
-├── tests/                       # Test code
-│   ├── pure_test.go            # Pure classification tests
-│   └── immutable_test.go       # Immutable-return classification tests
+├── purity/                # Purity test results
+│   ├── REPORT.md         # Full survey report
+│   └── v*.json           # Per-version purity data
 │
 ├── scripts/
-│   ├── enumerate.go            # Method enumeration script
-│   └── bisect.sh               # Bisect automation
+│   ├── methods/          # Enumeration code
+│   ├── purity/           # Purity test code
+│   ├── *-run.sh          # Single version scripts
+│   ├── *-all.sh          # Parallel all-version scripts
+│   └── *-generate-*.py   # Report generators
 │
-└── results/                     # Survey results
-    ├── v1.20.0.json
-    ├── v1.21.0.json
-    └── ...
+├── Dockerfile.methods     # Method enumeration container
+├── Dockerfile.purity      # Purity testing container
+└── versions.txt           # All 77 GORM versions
 ```
 
-## Execution Plan
+## Running the Survey
 
-### Step 1: Environment Setup
-- [ ] Create Dockerfile (Go + arbitrary GORM version)
-- [ ] Define multiple versions in docker-compose.yml
+```bash
+# Method enumeration (all 77 versions, 4 parallel)
+./scripts/methods-all.sh 4
+./scripts/methods-generate-markdown.sh > methods/REPORT.md
 
-### Step 2: Method Enumeration
-- [ ] List all methods of `*gorm.DB` from latest version
-- [ ] Record each method's signature
+# Purity testing (all 77 versions, 4 parallel)
+./scripts/purity-all.sh 4
+python3 scripts/purity-generate-markdown.py > purity/REPORT.md
 
-### Step 3: GORM Source Analysis
-- [ ] Analyze method implementations using Kiri
-- [ ] Identify introduction version for each method
-- [ ] Investigate `interface{}` argument patterns
-
-### Step 4: Test Creation
-- [ ] Create tests to classify pure/impure for each method
-- [ ] Create tests to classify immutable-return for each method
-- [ ] Create bomb pattern detection tests
-
-### Step 5: Cross-Version Bisect
-- [ ] Run bisect for each method
-- [ ] Record changes per version
-
-### Step 6: Results Summary
-- [ ] Create per-version pure/immutable-return compatibility table
-- [ ] Formulate policy for reflecting findings in gormreuse
+# Single version
+./scripts/methods-run.sh v1.31.1
+./scripts/purity-run.sh v1.31.1
+```
 
 ## References
 
-- [gormreuse](https://github.com/mpyw/gormreuse) - GORM *gorm.DB reuse linter
+- [gormreuse](https://github.com/mpyw/gormreuse) - GORM `*gorm.DB` reuse linter
 - [GORM Documentation](https://gorm.io/docs/)
 - [GORM GitHub](https://github.com/go-gorm/gorm)
+
+### Key GORM Issues
+
+- [#7662](https://github.com/go-gorm/gorm/issues/7662) - Preload callback clone=0 (v1.30.0+)
+- [#7594](https://github.com/go-gorm/gorm/issues/7594) - InnerJoins+Preload duplicate JOIN
+- [#7027](https://github.com/go-gorm/gorm/pull/7027) - AfterQuery Joins clearing fix
