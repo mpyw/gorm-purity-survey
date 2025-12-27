@@ -167,6 +167,7 @@
       "exists": true,
       "pure": true,
       "callback_arg_immutable": true,
+      "callback_clone": 2,
       "pure_note": "Preload modifies Statement.Preloads (not visible in main SQL)"
     },
     "Raw": {

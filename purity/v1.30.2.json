@@ -188,7 +188,9 @@
       "exists": true,
       "pure": true,
       "callback_arg_immutable": true,
-      "pure_note": "Preload modifies Statement.Preloads (not visible in main SQL)"
+      "callback_clone": 0,
+      "pure_note": "Preload modifies Statement.Preloads (not visible in main SQL)",
+      "callback_note": "BUG #7662: Preload callback clone=0 (first=1, second=1 markers)"
     },
     "Raw": {
       "name": "Raw",

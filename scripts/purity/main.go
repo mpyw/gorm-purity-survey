@@ -762,8 +762,16 @@ func testPreloadCallbackImmutability(result *PurityResult, m *MethodResult) {
 		return
 	}
 
+	// Capture callback clone value (CRITICAL for #7662 detection)
+	var callbackClone int = -1
+	callCount := 0
+
 	// Fixed marker - same marker every time (use column name to appear in SQL)
 	callback := func(tx *gorm.DB) *gorm.DB {
+		callCount++
+		if callCount == 1 {
+			callbackClone = getCloneValue(tx)
+		}
 		return tx.Where("fixed_callback_marker_col = ?", true)
 	}
 
@@ -793,7 +801,11 @@ func testPreloadCallbackImmutability(result *PurityResult, m *MethodResult) {
 	// Normal: first=1, second=1
 	// Bug: first=1, second=2 (or more)
 	m.CallbackArgImmutable = boolPtr(secondMarkerCount <= firstMarkerCount)
-	if m.CallbackArgImmutable != nil && !*m.CallbackArgImmutable {
+	m.CallbackClone = intPtr(callbackClone)
+
+	if callbackClone == 0 {
+		m.CallbackNote = fmt.Sprintf("BUG #7662: Preload callback clone=0 (first=%d, second=%d markers)", firstMarkerCount, secondMarkerCount)
+	} else if m.CallbackArgImmutable != nil && !*m.CallbackArgImmutable {
 		m.CallbackNote = fmt.Sprintf("BUG: Preload callback accumulates (first=%d, second=%d markers)", firstMarkerCount, secondMarkerCount)
 	}
 }
