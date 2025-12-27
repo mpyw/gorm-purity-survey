@@ -14,8 +14,11 @@ if [ ! -d "$METHODS_DIR" ] || [ -z "$(ls -A "$METHODS_DIR"/*.json 2>/dev/null)" 
     exit 1
 fi
 
-# Get sorted version list
-VERSIONS=$(ls "$METHODS_DIR"/*.json 2>/dev/null | xargs -n1 basename | sed 's/.json$//' | sort -V)
+# Get sorted version lists
+# VERSIONS_ASC: oldest first (for change detection)
+# VERSIONS: newest first (for tables - more recent = more valuable)
+VERSIONS_ASC=$(ls "$METHODS_DIR"/*.json 2>/dev/null | xargs -n1 basename | sed 's/.json$//' | sort -V)
+VERSIONS=$(echo "$VERSIONS_ASC" | sort -Vr)
 VERSION_COUNT=$(echo "$VERSIONS" | wc -l | tr -d ' ')
 
 cat << 'EOF'
@@ -28,7 +31,7 @@ This document summarizes the method enumeration across all surveyed GORM version
 EOF
 
 echo "- **Versions surveyed**: $VERSION_COUNT"
-echo "- **Version range**: $(echo "$VERSIONS" | head -1) ~ $(echo "$VERSIONS" | tail -1)"
+echo "- **Version range**: $(echo "$VERSIONS_ASC" | head -1) ~ $(echo "$VERSIONS_ASC" | tail -1)"
 echo ""
 
 # Method count comparison
@@ -49,7 +52,7 @@ done
 
 echo ""
 
-# Find versions where method count changed
+# Find versions where method count changed (chronological order)
 echo "## Method Count Changes"
 echo ""
 echo "Versions where \`*gorm.DB\` method count changed from previous version:"
@@ -57,7 +60,7 @@ echo ""
 
 PREV_COUNT=""
 PREV_VERSION=""
-for VERSION in $VERSIONS; do
+for VERSION in $VERSIONS_ASC; do
     FILE="$METHODS_DIR/${VERSION}.json"
     if [ -f "$FILE" ]; then
         COUNT=$(jq -r '.types["*gorm.DB"].method_count // 0' "$FILE")
@@ -76,14 +79,14 @@ done
 
 echo ""
 
-# New methods per version
+# New methods per version (chronological order)
 echo "## New Methods by Version"
 echo ""
 echo "Methods added in each version (compared to immediate predecessor):"
 echo ""
 
 PREV_FILE=""
-for VERSION in $VERSIONS; do
+for VERSION in $VERSIONS_ASC; do
     FILE="$METHODS_DIR/${VERSION}.json"
     if [ -f "$FILE" ]; then
         if [ -n "$PREV_FILE" ]; then
@@ -111,7 +114,7 @@ echo ""
 echo "Starting from v1.30, GORM introduced Generics API with interfaces that hold internal \`*gorm.DB\`:"
 echo ""
 
-# Check if any v1.30+ results exist
+# Check if any v1.30+ results exist (use descending to show latest first)
 for VERSION in $VERSIONS; do
     if [[ "$VERSION" =~ ^v1\.(3[0-9]|[4-9][0-9]) ]]; then
         FILE="$METHODS_DIR/${VERSION}.json"
@@ -152,7 +155,7 @@ echo "Methods that can potentially pollute \`*gorm.DB\` state:"
 echo ""
 
 # Get latest version file
-LATEST_FILE="$METHODS_DIR/$(echo "$VERSIONS" | tail -1).json"
+LATEST_FILE="$METHODS_DIR/$(echo "$VERSIONS" | head -1).json"
 if [ -f "$LATEST_FILE" ]; then
     echo "### Chain Methods (return \`*gorm.DB\`)"
     echo ""

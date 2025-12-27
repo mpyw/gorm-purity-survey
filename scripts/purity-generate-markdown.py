@@ -35,7 +35,10 @@ def main():
             results[version] = data
             all_methods.update(data.get("methods", {}).keys())
 
-    versions = [f.stem for f in json_files]
+    # versions_asc: oldest first (for change detection sections)
+    # versions: newest first (for matrix columns - more recent = more valuable)
+    versions_asc = [f.stem for f in json_files]
+    versions = list(reversed(versions_asc))
     all_methods = sorted(all_methods)
     short_versions = [v.replace("v1.", "") for v in versions]
 
@@ -64,7 +67,7 @@ def main():
     print("## Overview")
     print()
     print(f"- **Versions surveyed**: {len(versions)}")
-    print(f"- **Version range**: {versions[0]} ~ {versions[-1]}")
+    print(f"- **Version range**: {versions_asc[0]} ~ {versions_asc[-1]}")
     print()
 
     # Summary table
@@ -290,14 +293,14 @@ def main():
 
         print()
 
-    # Purity Changes
+    # Purity Changes (chronological order: oldest to newest)
     print("## Purity Changes Between Versions")
     print()
     print("Methods whose purity behavior changed between versions:")
     print()
 
     prev_version = None
-    for version in versions:
+    for version in versions_asc:
         if prev_version:
             changes = []
             for method in all_methods:
@@ -319,14 +322,14 @@ def main():
                 print()
         prev_version = version
 
-    # Clone Value Changes
+    # Clone Value Changes (chronological order: oldest to newest)
     print("## Clone Value Changes Between Versions")
     print()
     print("Methods whose clone values changed between versions:")
     print()
 
     prev_version = None
-    for version in versions:
+    for version in versions_asc:
         if prev_version:
             changes = []
             for method in all_methods:
@@ -360,13 +363,13 @@ def main():
     print("| Version Range | Session | Begin |")
     print("|---------------|---------|-------|")
 
-    # Detect session/begin clone value ranges
+    # Detect session/begin clone value ranges (chronological)
     session_begin_ranges = []
     current_session = None
     current_begin = None
     range_start = None
 
-    for version in versions:
+    for version in versions_asc:
         m = results[version].get("methods", {})
         session_clone = m.get("Session", {}).get("return_clone")
         begin_clone = m.get("Begin", {}).get("return_clone")
@@ -380,7 +383,7 @@ def main():
         prev_version = version
 
     if range_start is not None:
-        session_begin_ranges.append((range_start, versions[-1], current_session, current_begin))
+        session_begin_ranges.append((range_start, versions_asc[-1], current_session, current_begin))
 
     for start, end, session, begin in session_begin_ranges:
         if start == end:
@@ -401,7 +404,7 @@ def main():
     current_cb = None
     range_start = None
 
-    for version in versions:
+    for version in versions_asc:
         m = results[version].get("methods", {})
         return_clone = m.get("Scopes", {}).get("return_clone")
         cb_clone = m.get("Scopes", {}).get("callback_clone")
@@ -415,7 +418,7 @@ def main():
         prev_version = version
 
     if range_start is not None:
-        scopes_ranges.append((range_start, versions[-1], current_return, current_cb))
+        scopes_ranges.append((range_start, versions_asc[-1], current_return, current_cb))
 
     for start, end, ret, cb in scopes_ranges:
         cb_display = f"**{cb}**" if cb == 0 else str(cb) if cb is not None else "-"
