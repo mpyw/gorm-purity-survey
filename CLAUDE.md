@@ -490,54 +490,279 @@ All hold `*gorm.DB` internally via `ops []op` pattern.
 3. **Method existence per version**: `MapColumns`, `InnerJoins` may not exist in old versions
 4. **Statement clone timing**: When exactly is Statement cloned?
 
-## Next Steps (Current Status)
+## Current Status
 
-**Purity tests need to be rewritten with correct strategy.**
+### Phase 3 Complete: Basic Purity Tests ✓
 
-### Problem with Current Tests
-- Current tests start from `Session()` (immutable base)
-- This only tests Session's isolation, NOT actual mutable branching behavior
-- Missed detecting: Preload callback regression in v1.30.0, Joins double-execution bomb
+Basic purity tests implemented and run on all 77 versions:
+- **Pure test**: Mutable base, discard result, check pollution
+- **Immutable-return test**: Branch interference check
+- **Callback-arg immutable test**: Preload callback accumulation
 
-### TODO: Rewrite Purity Tests
+**Key Findings from Phase 3:**
+- v1.21.0 briefly made all methods pure (reverted in v1.21.1)
+- v1.21.8: Delete/Update/Updates became pure
+- v1.25.7: Limit/Offset became pure
+- Latest (v1.31.1): 26 pure, 21 impure methods
 
-1. **Pure test**: Test from MUTABLE base (no Session)
-   ```go
-   q := db.Model(&User{}).Where("x")  // mutable
-   q.Where("marker")                   // discard result
-   q.Find(&r)                          // check if "marker" appears
-   ```
+### Phase 4: Extended Tests (TODO)
 
-2. **Immutable-return test**: Branch from return value
-   ```go
-   q := db.Where("x")
-   q.Where("a").Find(&r1)
-   q.Where("b").Find(&r2)  // check if "a" leaks
-   ```
+Additional test dimensions needed to catch known regressions:
 
-3. **Callback argument immutability test**: For Preload/Joins callbacks
-   ```go
-   q := db.Preload("Assoc", func(tx *gorm.DB) *gorm.DB {
-       return tx.Where("marker")
-   })
-   q.Find(&r1)
-   q.Find(&r2)  // check if "marker" accumulates
-   ```
+#### 4.1 Finisher Reuse Test (Joins Preservation)
+**Issue**: PR #7027 fixed Count() clearing Joins, but behavior varies by version
 
-4. **Use recover()**: Callback support varies by version, wrap in recover
+```go
+// Test: After Finisher, are Joins preserved for next query?
+q := db.Model(&User{}).Joins("Profile")
+q.Count(&count)    // 1st finisher
+q.Find(&users)     // 2nd finisher - Joins still there?
 
-### Known Version-Specific Issues to Detect
-- **v1.30.0**: Preload callback `*gorm.DB` has `clone=0` (GitHub #7662)
-- **v1.25~v1.30**: Joins behavior changed (double-execution causes error)
+// Check SQL of 2nd query for "Profile" join
+// Possible outcomes:
+//   - Joins preserved (expected)
+//   - Joins cleared (PR #7027 pre-fix bug)
+//   - Joins duplicated (regression)
+```
 
-### When Resuming
-1. Rewrite `scripts/purity/main.go` with correct test patterns
-2. Re-run on all 77 versions
-3. Verify detection of known regressions (v1.30.0 Preload issue)
+**Versions to watch**: v1.25.x where PR #7027 was applied
+
+#### 4.2 InnerJoins + Preload Duplicate Test
+**Issue**: PR #7014 (v1.25.12) broke InnerJoins + nested Preload
+
+```go
+// Test: InnerJoins + Preload on nested relations
+db.Model(&Comic{}).
+   InnerJoins("Book.MstBook").
+   Preload("Book.MstBook.Episodes").
+   Find(&results)
+
+// Check SQL for duplicate table names
+// PostgreSQL error: "table name X specified more than once"
+// Possible outcomes:
+//   - Single JOIN per table (correct)
+//   - Duplicate JOINs (PR #7014 regression)
+```
+
+**Versions to watch**: v1.25.12+, v1.30.x, v1.31.x
+
+#### 4.3 Preload Callback Argument Mutation
+**Issue**: GitHub #7662 - Preload callback's `*gorm.DB` became mutable in v1.30.0
+
+```go
+// Test: Preload callback arg accumulates state across executions
+callback := func(tx *gorm.DB) *gorm.DB {
+    return tx.Where("marker_col = ?", true)
+}
+q := db.Model(&User{}).Preload("Profile", callback)
+
+q.Find(&r1)  // 1st execution: marker appears once
+q.Find(&r2)  // 2nd execution: marker appears once or twice?
+
+// If marker appears twice in 2nd execution SQL:
+//   Callback arg is MUTABLE (regression in v1.30.0+)
+```
+
+**Versions to watch**: v1.30.0+ (clone=0 issue)
+
+### Known GORM Issues Timeline
+
+| Version | PR/Issue | Problem | Status |
+|---------|----------|---------|--------|
+| v1.21.0 | - | All methods briefly pure | Reverted in v1.21.1 |
+| v1.25.8 | PR #6877 | Fixed nested Preload+Join panic | Removed reflect.Pointer support |
+| v1.25.9 | PR #6990 | Merged nested preload queries | Performance optimization |
+| v1.25.11 | PR #6957 | Re-added reflect.Pointer | Fixed "unsupported data" error |
+| v1.25.12 | PR #7014 | Use reflect.Append + nil skip | **Broke InnerJoins+Preload** |
+| v1.25.12 | PR #7027 | Fix AfterQuery Joins clearing | Fixed Count clearing Joins |
+| v1.30.0+ | #7662 | Preload callback clone=0 | **Callback arg mutable** |
+| v1.31.1 | - | Latest version | PR #7014 issue NOT fixed |
+
+### Implementation Plan
+
+#### Step 1: Add Test Models
+Need models with nested relations for InnerJoins+Preload test:
+```go
+type Comic struct {
+    ID     uint
+    BookID uint
+    Book   Book
+}
+type Book struct {
+    ID      uint
+    MstBook MstBook
+}
+type MstBook struct {
+    ID       uint
+    Episodes []Episode
+}
+```
+
+#### Step 2: Implement New Tests
+Add to `scripts/purity/main.go`:
+- `testFinisherReuse_Joins()` - Count→Find with Joins
+- `testInnerJoinsPreloadDuplicate()` - Nested InnerJoins+Preload
+- Enhance `testPreload()` callback test
+
+#### Step 3: Update JSON Schema
+Add new result fields:
+```json
+{
+  "methods": {
+    "Joins": {
+      "finisher_preserves": true/false,
+      "innerjoins_preload_safe": true/false
+    },
+    "Preload": {
+      "callback_arg_immutable": true/false
+    }
+  }
+}
+```
+
+#### Step 4: Re-run All Versions
+```bash
+rm purity/*.json
+./scripts/purity-all.sh 4
+python3 scripts/purity-generate-markdown.py > purity/REPORT.md
+```
+
+#### Step 5: Update Report Generator
+Add new sections:
+- Finisher Reuse Matrix
+- InnerJoins+Preload Safety Matrix
+- Version-specific regression warnings
+
+### Alternative Approach: godump for Direct State Inspection
+
+**Problem with current SQL-based detection:**
+- Indirect: relies on SQL output to infer internal state changes
+- May miss changes to fields that don't affect SQL
+- Complex marker string matching
+
+**Better approach using godump (https://github.com/goforj/godump):**
+
+```go
+import "github.com/goforj/godump"
+
+// Direct state comparison
+before := godump.Sprint(db.Statement)
+db.Where("x")  // discard result
+after := godump.Sprint(db.Statement)
+
+if before != after {
+    // Method polluted receiver - can see exactly what changed
+}
+```
+
+**Implementation Strategy:**
+
+#### Step 0: Identify Relevant Fields (Do First!)
+
+Run godump on one version (e.g., v1.31.1) to identify which `Statement` fields matter:
+
+```go
+// Test script to identify relevant fields
+db := setupDB()
+base := db.Model(&User{})
+
+fmt.Println("=== Before Where ===")
+godump.Dump(base.Statement)
+
+base.Where("x")
+
+fmt.Println("=== After Where (discarded) ===")
+godump.Dump(base.Statement)
+```
+
+**Expected relevant fields in `*gorm.Statement`:**
+- `Clauses` - WHERE, ORDER BY, etc.
+- `Joins` - JOIN information
+- `Preloads` - Preload configurations
+- `Selects` / `Omits` - Column selection
+- `Table` / `Model` - Table info
+- `Dest` - Destination pointer
+
+**Fields to IGNORE (likely noise):**
+- `DB` - Pointer to parent (circular)
+- `Context` - Context object
+- `ConnPool` - Connection pool
+- `Schema` - Cached schema (may change on first access)
+- `Settings` - sync.Map (hard to compare)
+
+#### Step 1: Create Field Extractor
+
+```go
+type StatementSnapshot struct {
+    Clauses   map[string]interface{}
+    Joins     []string  // join names
+    Preloads  map[string]bool
+    Table     string
+    Selects   []string
+    Omits     []string
+}
+
+func snapshotStatement(stmt *gorm.Statement) StatementSnapshot {
+    // Extract only relevant fields
+    snapshot := StatementSnapshot{...}
+    return snapshot
+}
+
+func (s StatementSnapshot) Equals(other StatementSnapshot) bool {
+    return reflect.DeepEqual(s, other)
+}
+```
+
+#### Step 2: Rewrite Tests with State Comparison
+
+```go
+func testPure_Where() {
+    db := setupDB()
+    base := db.Model(&User{})
+
+    before := snapshotStatement(base.Statement)
+    base.Where("x")  // discard
+    after := snapshotStatement(base.Statement)
+
+    pure := before.Equals(after)
+    // No need to execute query or check SQL!
+}
+```
+
+**Advantages:**
+- Direct detection of any state change
+- No need for SQL marker strings
+- Can detect changes that don't affect SQL output
+- Clearer test logic
+
+**Considerations:**
+- Need to handle version-specific Statement struct changes
+- Some fields may be legitimately lazy-initialized
+- Circular references need careful handling
+
+### When Resuming This Work
+
+1. Read this section first
+2. **Run godump exploration first** to identify relevant Statement fields
+3. Create `snapshotStatement()` function
+4. Rewrite tests with state comparison approach
+5. Key versions to verify: v1.25.11, v1.25.12, v1.30.0, v1.31.1
 
 ## References
 
+### Tools
 - [gormreuse](https://github.com/mpyw/gormreuse) - Target linter
+- [godump](https://github.com/goforj/godump) - Struct inspection for state comparison
+- [go-sqlmock](https://github.com/DATA-DOG/go-sqlmock) - SQL mocking
+
+### GORM Documentation
 - [GORM Docs](https://gorm.io/docs/)
 - [GORM GitHub](https://github.com/go-gorm/gorm)
-- [go-sqlmock](https://github.com/DATA-DOG/go-sqlmock)
+
+### Key GORM Issues (Breaking Changes)
+- [#7662](https://github.com/go-gorm/gorm/issues/7662) - Preload callback clone=0 regression (v1.30.0+)
+- [#7594](https://github.com/go-gorm/gorm/issues/7594) - InnerJoins+Preload duplicate JOIN (v1.25.12+)
+- [#7027](https://github.com/go-gorm/gorm/pull/7027) - AfterQuery Joins clearing fix
+- [#7014](https://github.com/go-gorm/gorm/pull/7014) - reflect.Append change (broke InnerJoins+Preload)
+- [#6957](https://github.com/go-gorm/gorm/pull/6957) - reflect.Pointer re-added
+- [#6877](https://github.com/go-gorm/gorm/pull/6877) - Nested Preload+Join panic fix
