@@ -1,5 +1,5 @@
 {
-  "gorm_version": "unknown",
+  "gorm_version": "v1.22.5",
   "types": {
     "*gorm.Association": {
       "type_name": "*gorm.Association",

@@ -91,8 +91,18 @@ func main() {
 	// Analyze pollution paths
 	pollutionPaths := enumerator.findPollutionPaths()
 
+	// Get GORM version from environment or file
+	gormVersion := os.Getenv("GORM_VERSION")
+	if gormVersion == "" {
+		if data, err := os.ReadFile("/tmp/gorm_version.txt"); err == nil {
+			gormVersion = strings.TrimSpace(string(data))
+		} else {
+			gormVersion = "unknown"
+		}
+	}
+
 	output := EnumerationResult{
-		GormVersion:    "unknown",
+		GormVersion:    gormVersion,
 		Types:          enumerator.result,
 		PollutionPaths: pollutionPaths,
 	}
