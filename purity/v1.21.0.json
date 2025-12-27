@@ -62,7 +62,8 @@
       "name": "Distinct",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Exec": {
       "name": "Exec",
@@ -95,19 +96,22 @@
       "name": "Group",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Having": {
       "name": "Having",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Joins": {
       "name": "Joins",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Last": {
       "name": "Last",
@@ -124,13 +128,15 @@
       "name": "Model",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Not": {
       "name": "Not",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Offset": {
       "name": "Offset",
@@ -155,7 +161,8 @@
       "name": "Order",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Pluck": {
       "name": "Pluck",
@@ -211,7 +218,8 @@
       "name": "Select",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Session": {
       "name": "Session",
@@ -225,7 +233,8 @@
       "name": "Table",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Take": {
       "name": "Take",

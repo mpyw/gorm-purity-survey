@@ -432,6 +432,9 @@ func testNot(result *PurityResult) {
 		return
 	}
 
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Not("test = ?", 1)))
+
 	base := db.Model(&User{})
 	base.Not("pollution_marker_col = ?", true)
 	expectAnyQuery(mock)
@@ -490,6 +493,9 @@ func testSelect(result *PurityResult) {
 		m.Error = err.Error()
 		return
 	}
+
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Select("id")))
 
 	base := db.Model(&User{})
 	base.Select("POLLUTION_MARKER")
@@ -550,6 +556,9 @@ func testOrder(result *PurityResult) {
 		return
 	}
 
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Order("id")))
+
 	base := db.Model(&User{})
 	base.Order("POLLUTION_MARKER")
 	expectAnyQuery(mock)
@@ -609,6 +618,9 @@ func testGroup(result *PurityResult) {
 		return
 	}
 
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Group("id")))
+
 	base := db.Model(&User{})
 	base.Group("POLLUTION_MARKER")
 	expectAnyQuery(mock)
@@ -647,6 +659,9 @@ func testHaving(result *PurityResult) {
 		return
 	}
 
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Having("count(*) > ?", 0)))
+
 	base := db.Model(&User{}).Group("role")
 	base.Having("pollution_marker_col > ?", 0)
 	expectAnyQuery(mock)
@@ -684,6 +699,9 @@ func testJoins(result *PurityResult) {
 		m.Error = err.Error()
 		return
 	}
+
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Joins("test")))
 
 	base := db.Model(&User{})
 	base.Joins("POLLUTION_MARKER")
@@ -820,6 +838,9 @@ func testDistinct(result *PurityResult) {
 		m.Error = err.Error()
 		return
 	}
+
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Distinct("id")))
 
 	base := db.Model(&User{})
 	base.Distinct("POLLUTION_MARKER")
@@ -986,6 +1007,9 @@ func testModel(result *PurityResult) {
 		return
 	}
 
+	// Record clone value of returned *gorm.DB
+	m.ReturnClone = intPtr(getCloneValue(db.Model(&User{})))
+
 	base := db.Where("base = ?", true)
 	base.Model(&User{})
 	expectAnyQuery(mock)
@@ -1025,6 +1049,9 @@ func testTable(result *PurityResult) {
 		m.Error = err.Error()
 		return
 	}
+
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Table("test")))
 
 	base := db.Where("base = ?", true)
 	base.Table("POLLUTION_TABLE")
@@ -1202,20 +1229,23 @@ func testSession(result *PurityResult) {
 	m.PureNote = "Session creates new instance"
 
 	// === IMMUTABLE-RETURN TEST (CRITICAL) ===
+	// Test Session's DIRECT return value, not Session().Model()
+	// Session() returns clone=2, so getInstance() creates new tx each time
 	db, mock, cap, err := setupDB()
 	if err != nil {
 		m.Error = err.Error()
 		return
 	}
 
-	q := db.Session(&gorm.Session{}).Model(&User{})
+	// Test: Session's return can be branched
+	q := db.Session(&gorm.Session{})
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
 	var users []User
-	q.Where("branch_one_col = ?", true).Find(&users)
+	q.Model(&User{}).Where("branch_one_col = ?", true).Find(&users)
 
 	cap.Reset()
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
-	q.Where("branch_two_col = ?", true).Find(&users)
+	q.Model(&User{}).Where("branch_two_col = ?", true).Find(&users)
 
 	m.ImmutableReturn = boolPtr(!cap.ContainsNormalized("branch_one_col"))
 	if m.ImmutableReturn != nil && !*m.ImmutableReturn {
@@ -1227,26 +1257,54 @@ func testWithContext(result *PurityResult) {
 	m := MethodResult{Name: "WithContext", Exists: true}
 	defer func() { result.Methods["WithContext"] = m }()
 
-	db, _, _, _ := setupDB()
+	db, mock, cap, _ := setupDB()
 	m.ReturnClone = intPtr(getCloneValue(db.WithContext(db.Statement.Context)))
 
 	m.Pure = boolPtr(true)
 	m.PureNote = "WithContext creates new instance"
-	m.ImmutableReturn = boolPtr(true)
-	m.ImmutableNote = "WithContext returns immutable (like Session)"
+
+	// === IMMUTABLE-RETURN TEST ===
+	// Test WithContext's DIRECT return value
+	q := db.WithContext(db.Statement.Context)
+	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
+	var users []User
+	q.Model(&User{}).Where("branch_one_col = ?", true).Find(&users)
+
+	cap.Reset()
+	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
+	q.Model(&User{}).Where("branch_two_col = ?", true).Find(&users)
+
+	m.ImmutableReturn = boolPtr(!cap.ContainsNormalized("branch_one_col"))
+	if m.ImmutableReturn != nil && *m.ImmutableReturn {
+		m.ImmutableNote = "WithContext returns immutable (like Session)"
+	}
 }
 
 func testDebug(result *PurityResult) {
 	m := MethodResult{Name: "Debug", Exists: true}
 	defer func() { result.Methods["Debug"] = m }()
 
-	db, _, _, _ := setupDB()
+	db, mock, cap, _ := setupDB()
 	m.ReturnClone = intPtr(getCloneValue(db.Debug()))
 
 	m.Pure = boolPtr(true)
 	m.PureNote = "Debug creates new instance"
-	m.ImmutableReturn = boolPtr(true)
-	m.ImmutableNote = "Debug returns immutable (like Session)"
+
+	// === IMMUTABLE-RETURN TEST ===
+	// Test Debug's DIRECT return value
+	q := db.Debug()
+	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
+	var users []User
+	q.Model(&User{}).Where("branch_one_col = ?", true).Find(&users)
+
+	cap.Reset()
+	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
+	q.Model(&User{}).Where("branch_two_col = ?", true).Find(&users)
+
+	m.ImmutableReturn = boolPtr(!cap.ContainsNormalized("branch_one_col"))
+	if m.ImmutableReturn != nil && *m.ImmutableReturn {
+		m.ImmutableNote = "Debug returns immutable (like Session)"
+	}
 }
 
 func testBegin(result *PurityResult) {

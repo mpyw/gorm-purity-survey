@@ -61,7 +61,8 @@
       "name": "Distinct",
       "exists": true,
       "pure": false,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Exec": {
       "name": "Exec",
@@ -94,20 +95,23 @@
       "name": "Group",
       "exists": true,
       "pure": false,
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Having": {
       "name": "Having",
       "exists": true,
       "pure": false,
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Joins": {
       "name": "Joins",
       "exists": true,
       "pure": false,
       "impure_mode": "accumulate",
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Last": {
       "name": "Last",
@@ -125,14 +129,16 @@
       "name": "Model",
       "exists": true,
       "pure": false,
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Not": {
       "name": "Not",
       "exists": true,
       "pure": false,
       "impure_mode": "accumulate",
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Offset": {
       "name": "Offset",
@@ -160,7 +166,8 @@
       "exists": true,
       "pure": false,
       "impure_mode": "accumulate",
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Pluck": {
       "name": "Pluck",
@@ -217,22 +224,23 @@
       "exists": true,
       "pure": false,
       "impure_mode": "overwrite",
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Session": {
       "name": "Session",
       "exists": true,
       "pure": true,
-      "immutable_return": false,
+      "immutable_return": true,
       "return_clone": 2,
-      "pure_note": "Session creates new instance",
-      "immutable_note": "CRITICAL BUG: Session should return immutable!"
+      "pure_note": "Session creates new instance"
     },
     "Table": {
       "name": "Table",
       "exists": true,
       "pure": false,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Take": {
       "name": "Take",
@@ -279,8 +287,8 @@
     "total_methods": 43,
     "pure_methods": 18,
     "impure_methods": 25,
-    "immutable_count": 8,
-    "mutable_count": 10,
+    "immutable_count": 9,
+    "mutable_count": 9,
     "callback_immutable": 1,
     "callback_mutable": 0
   }
