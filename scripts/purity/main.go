@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -70,7 +71,9 @@ type MethodResult struct {
 	Pure                   *bool   `json:"pure,omitempty"`                     // nil if not testable
 	ImpureMode             *string `json:"impure_mode,omitempty"`              // "accumulate" or "overwrite" (only if pure=false)
 	ImmutableReturn        *bool   `json:"immutable_return,omitempty"`         // nil if not testable
+	ReturnClone            *int    `json:"return_clone,omitempty"`             // clone value of returned *gorm.DB (0=no clone, 1=stmt clone, 2=full clone)
 	CallbackArgImmutable   *bool   `json:"callback_arg_immutable,omitempty"`   // nil if method doesn't take callback
+	CallbackClone          *int    `json:"callback_clone,omitempty"`           // clone value of callback's *gorm.DB argument
 	FinisherPreservesJoins *bool   `json:"finisher_preserves_joins,omitempty"` // For Count: are Joins preserved after execution?
 	PureNote               string  `json:"pure_note,omitempty"`
 	ImmutableNote          string  `json:"immutable_note,omitempty"`
@@ -185,6 +188,21 @@ func strPtr(s string) *string {
 	return &s
 }
 
+func intPtr(i int) *int {
+	return &i
+}
+
+// getCloneValue extracts the unexported clone field from *gorm.DB
+// Returns -1 if field doesn't exist
+func getCloneValue(db *gorm.DB) int {
+	rv := reflect.ValueOf(db).Elem()
+	cloneField := rv.FieldByName("clone")
+	if !cloneField.IsValid() {
+		return -1
+	}
+	return int(cloneField.Int())
+}
+
 // expectAnyQuery sets up mock to accept any query.
 func expectAnyQuery(mock sqlmock.Sqlmock) {
 	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "role"}))
@@ -276,6 +294,10 @@ func testWhere(result *PurityResult) {
 		return
 	}
 
+	// Record clone value of returned *gorm.DB
+	returnedDB := db.Where("test = ?", 1)
+	m.ReturnClone = intPtr(getCloneValue(returnedDB))
+
 	// MUTABLE base - no Session()
 	base := db.Model(&User{}).Where("base_cond = ?", true)
 	// Call method and DISCARD result (use column name as marker - appears in SQL)
@@ -347,6 +369,9 @@ func testOr(result *PurityResult) {
 		m.Error = err.Error()
 		return
 	}
+
+	// Record clone value
+	m.ReturnClone = intPtr(getCloneValue(db.Or("test = ?", 1)))
 
 	base := db.Model(&User{}).Where("active = ?", true)
 	base.Or("pollution_marker_col = ?", true)
@@ -1056,6 +1081,20 @@ func testScopes(result *PurityResult) {
 		return
 	}
 
+	// Record clone values
+	m.ReturnClone = intPtr(getCloneValue(db.Scopes(func(d *gorm.DB) *gorm.DB { return d })))
+
+	// Callback clone value (CRITICAL for callback isolation)
+	var callbackClone int = -1
+	db.Model(&User{}).Scopes(func(tx *gorm.DB) *gorm.DB {
+		callbackClone = getCloneValue(tx)
+		return tx
+	})
+	mock.ExpectQuery(".*").WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	var dummy []User
+	db.Model(&User{}).Find(&dummy) // trigger callback execution
+	m.CallbackClone = intPtr(callbackClone)
+
 	pollutingScope := func(db *gorm.DB) *gorm.DB {
 		return db.Where("pollution_marker_col = ?", true)
 	}
@@ -1141,6 +1180,10 @@ func testSession(result *PurityResult) {
 
 	// Session MUST return immutable - this is the foundation of safe GORM usage
 
+	// === CLONE VALUE ===
+	db0, _, _, _ := setupDB()
+	m.ReturnClone = intPtr(getCloneValue(db0.Session(&gorm.Session{})))
+
 	// === PURE TEST ===
 	// Session itself doesn't pollute, it creates a new instance
 	m.Pure = boolPtr(true)
@@ -1172,6 +1215,9 @@ func testWithContext(result *PurityResult) {
 	m := MethodResult{Name: "WithContext", Exists: true}
 	defer func() { result.Methods["WithContext"] = m }()
 
+	db, _, _, _ := setupDB()
+	m.ReturnClone = intPtr(getCloneValue(db.WithContext(db.Statement.Context)))
+
 	m.Pure = boolPtr(true)
 	m.PureNote = "WithContext creates new instance"
 	m.ImmutableReturn = boolPtr(true)
@@ -1182,6 +1228,9 @@ func testDebug(result *PurityResult) {
 	m := MethodResult{Name: "Debug", Exists: true}
 	defer func() { result.Methods["Debug"] = m }()
 
+	db, _, _, _ := setupDB()
+	m.ReturnClone = intPtr(getCloneValue(db.Debug()))
+
 	m.Pure = boolPtr(true)
 	m.PureNote = "Debug creates new instance"
 	m.ImmutableReturn = boolPtr(true)
@@ -1191,6 +1240,9 @@ func testDebug(result *PurityResult) {
 func testBegin(result *PurityResult) {
 	m := MethodResult{Name: "Begin", Exists: true}
 	defer func() { result.Methods["Begin"] = m }()
+
+	db, _, _, _ := setupDB()
+	m.ReturnClone = intPtr(getCloneValue(db.Begin()))
 
 	m.Pure = boolPtr(true)
 	m.PureNote = "Begin creates new transaction instance"
