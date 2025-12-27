@@ -1,0 +1,83 @@
+# Multi-version GORM survey (SAMPLING ONLY)
+#
+# This compose.yaml contains REPRESENTATIVE versions for quick testing.
+# For full 77-version survey, use: ./scripts/enumerate-all.sh
+#
+# Usage:
+#   Quick sample:  docker compose up --build
+#   Full survey:   ./scripts/enumerate-all.sh 4  (4 = parallelism)
+
+name: gorm-purity-survey
+
+services:
+  survey-v1.20:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.20.0
+    volumes:
+      - ./results:/app/results
+
+  survey-v1.21:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.21.0
+    volumes:
+      - ./results:/app/results
+
+  survey-v1.22:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.22.0
+    volumes:
+      - ./results:/app/results
+
+  survey-v1.23:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.23.0
+    volumes:
+      - ./results:/app/results
+
+  survey-v1.24:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.24.0
+    volumes:
+      - ./results:/app/results
+
+  survey-v1.25:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.25.0
+    volumes:
+      - ./results:/app/results
+
+  survey-v1.26:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.26.0
+    volumes:
+      - ./results:/app/results
+
+  survey-v1.30:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.30.0
+    volumes:
+      - ./results:/app/results
+
+  survey-latest:
+    build:
+      context: .
+      args:
+        GORM_VERSION: v1.31.1
+    volumes:
+      - ./results:/app/results

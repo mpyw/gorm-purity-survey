@@ -1,0 +1,3614 @@
+{
+  "gorm_version": "unknown",
+  "types": {
+    "*gorm.Association": {
+      "type_name": "*gorm.Association",
+      "method_count": 6,
+      "methods": [
+        {
+          "name": "Append",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Append(...interface {}) error"
+        },
+        {
+          "name": "Clear",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Clear() error"
+        },
+        {
+          "name": "Count",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "int64"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Count() int64"
+        },
+        {
+          "name": "Delete",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Delete(...interface {}) error"
+        },
+        {
+          "name": "Find",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Find(interface {}, ...interface {}) error"
+        },
+        {
+          "name": "Replace",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Replace(...interface {}) error"
+        }
+      ]
+    },
+    "*gorm.DB": {
+      "type_name": "*gorm.DB",
+      "method_count": 71,
+      "methods": [
+        {
+          "name": "AddError",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "error"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "AddError(error) error"
+        },
+        {
+          "name": "Assign",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Assign(...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Association",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.Association"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Association(string) *gorm.Association"
+        },
+        {
+          "name": "Attrs",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Attrs(...interface {}) *gorm.DB"
+        },
+        {
+          "name": "AutoMigrate",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "AutoMigrate(...interface {}) error"
+        },
+        {
+          "name": "Begin",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...*sql.TxOptions"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Begin(...*sql.TxOptions) *gorm.DB"
+        },
+        {
+          "name": "BindVarTo",
+          "num_in": 3,
+          "num_out": 0,
+          "in_types": [
+            "clause.Writer",
+            "*gorm.Statement",
+            "interface {}"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "BindVarTo(clause.Writer, *gorm.Statement, interface {})"
+        },
+        {
+          "name": "Callback",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.callbacks"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Callback() *gorm.callbacks"
+        },
+        {
+          "name": "Clauses",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...clause.Expression"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Clauses(...clause.Expression) *gorm.DB"
+        },
+        {
+          "name": "Commit",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Commit() *gorm.DB"
+        },
+        {
+          "name": "Count",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*int64"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Count(*int64) *gorm.DB"
+        },
+        {
+          "name": "Create",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Create(interface {}) *gorm.DB"
+        },
+        {
+          "name": "CreateInBatches",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "int"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "CreateInBatches(interface {}, int) *gorm.DB"
+        },
+        {
+          "name": "DB",
+          "num_in": 0,
+          "num_out": 2,
+          "in_types": null,
+          "out_types": [
+            "*sql.DB",
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DB() (*sql.DB, error)"
+        },
+        {
+          "name": "DataTypeOf",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*schema.Field"
+          ],
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DataTypeOf(*schema.Field) string"
+        },
+        {
+          "name": "Debug",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Debug() *gorm.DB"
+        },
+        {
+          "name": "DefaultValueOf",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*schema.Field"
+          ],
+          "out_types": [
+            "clause.Expression"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DefaultValueOf(*schema.Field) clause.Expression"
+        },
+        {
+          "name": "Delete",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Delete(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Distinct",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Distinct(...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Exec",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Exec(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Explain",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Explain(string, ...interface {}) string"
+        },
+        {
+          "name": "Find",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Find(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "FindInBatches",
+          "num_in": 3,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "int",
+            "func(*gorm.DB, int) error"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": false,
+          "signature": "FindInBatches(interface {}, int, func(*gorm.DB, int) error) *gorm.DB"
+        },
+        {
+          "name": "First",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "First(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "FirstOrCreate",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "FirstOrCreate(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "FirstOrInit",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "FirstOrInit(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Get",
+          "num_in": 1,
+          "num_out": 2,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "interface {}",
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Get(string) (interface {}, bool)"
+        },
+        {
+          "name": "Group",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Group(string) *gorm.DB"
+        },
+        {
+          "name": "Having",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Having(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Initialize",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*gorm.DB"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": true,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Initialize(*gorm.DB) error"
+        },
+        {
+          "name": "InstanceGet",
+          "num_in": 1,
+          "num_out": 2,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "interface {}",
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "InstanceGet(string) (interface {}, bool)"
+        },
+        {
+          "name": "InstanceSet",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "InstanceSet(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "Joins",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Joins(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Last",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Last(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Limit",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "int"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Limit(int) *gorm.DB"
+        },
+        {
+          "name": "Migrator",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "gorm.Migrator"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Migrator() gorm.Migrator"
+        },
+        {
+          "name": "Model",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Model(interface {}) *gorm.DB"
+        },
+        {
+          "name": "Name",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Name() string"
+        },
+        {
+          "name": "Not",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Not(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Offset",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "int"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Offset(int) *gorm.DB"
+        },
+        {
+          "name": "Omit",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Omit(...string) *gorm.DB"
+        },
+        {
+          "name": "Or",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Or(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Order",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Order(interface {}) *gorm.DB"
+        },
+        {
+          "name": "Pluck",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Pluck(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "Preload",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Preload(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "QuoteTo",
+          "num_in": 2,
+          "num_out": 0,
+          "in_types": [
+            "clause.Writer",
+            "string"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "QuoteTo(clause.Writer, string)"
+        },
+        {
+          "name": "Raw",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Raw(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Rollback",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Rollback() *gorm.DB"
+        },
+        {
+          "name": "RollbackTo",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "RollbackTo(string) *gorm.DB"
+        },
+        {
+          "name": "Row",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*sql.Row"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Row() *sql.Row"
+        },
+        {
+          "name": "Rows",
+          "num_in": 0,
+          "num_out": 2,
+          "in_types": null,
+          "out_types": [
+            "*sql.Rows",
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Rows() (*sql.Rows, error)"
+        },
+        {
+          "name": "Save",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Save(interface {}) *gorm.DB"
+        },
+        {
+          "name": "SavePoint",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "SavePoint(string) *gorm.DB"
+        },
+        {
+          "name": "Scan",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Scan(interface {}) *gorm.DB"
+        },
+        {
+          "name": "ScanRows",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "*sql.Rows",
+            "interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "ScanRows(*sql.Rows, interface {}) error"
+        },
+        {
+          "name": "Scopes",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...func(*gorm.DB) *gorm.DB"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Scopes(...func(*gorm.DB) *gorm.DB) *gorm.DB"
+        },
+        {
+          "name": "Select",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Select(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Session",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*gorm.Session"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Session(*gorm.Session) *gorm.DB"
+        },
+        {
+          "name": "Set",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Set(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "SetupJoinTable",
+          "num_in": 3,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "SetupJoinTable(interface {}, string, interface {}) error"
+        },
+        {
+          "name": "Table",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Table(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Take",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Take(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Transaction",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "func(*gorm.DB) error",
+            "...*sql.TxOptions"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": true,
+          "signature": "Transaction(func(*gorm.DB) error, ...*sql.TxOptions) error"
+        },
+        {
+          "name": "Unscoped",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Unscoped() *gorm.DB"
+        },
+        {
+          "name": "Update",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Update(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "UpdateColumn",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "UpdateColumn(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "UpdateColumns",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "UpdateColumns(interface {}) *gorm.DB"
+        },
+        {
+          "name": "Updates",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Updates(interface {}) *gorm.DB"
+        },
+        {
+          "name": "Use",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "gorm.Plugin"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Use(gorm.Plugin) error"
+        },
+        {
+          "name": "Where",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Where(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "WithContext",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "context.Context"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "WithContext(context.Context) *gorm.DB"
+        }
+      ],
+      "derived_types": [
+        "*gorm.Association",
+        "*gorm.callbacks",
+        "clause.Expression",
+        "gorm.Migrator"
+      ]
+    },
+    "*gorm.Statement": {
+      "type_name": "*gorm.Statement",
+      "method_count": 77,
+      "methods": [
+        {
+          "name": "AddClause",
+          "num_in": 1,
+          "num_out": 0,
+          "in_types": [
+            "clause.Interface"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "AddClause(clause.Interface)"
+        },
+        {
+          "name": "AddClauseIfNotExists",
+          "num_in": 1,
+          "num_out": 0,
+          "in_types": [
+            "clause.Interface"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "AddClauseIfNotExists(clause.Interface)"
+        },
+        {
+          "name": "AddError",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "error"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "AddError(error) error"
+        },
+        {
+          "name": "AddVar",
+          "num_in": 2,
+          "num_out": 0,
+          "in_types": [
+            "clause.Writer",
+            "...interface {}"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "AddVar(clause.Writer, ...interface {})"
+        },
+        {
+          "name": "Assign",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Assign(...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Association",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.Association"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Association(string) *gorm.Association"
+        },
+        {
+          "name": "Attrs",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Attrs(...interface {}) *gorm.DB"
+        },
+        {
+          "name": "AutoMigrate",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "AutoMigrate(...interface {}) error"
+        },
+        {
+          "name": "Begin",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...*sql.TxOptions"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Begin(...*sql.TxOptions) *gorm.DB"
+        },
+        {
+          "name": "BindVarTo",
+          "num_in": 3,
+          "num_out": 0,
+          "in_types": [
+            "clause.Writer",
+            "*gorm.Statement",
+            "interface {}"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "BindVarTo(clause.Writer, *gorm.Statement, interface {})"
+        },
+        {
+          "name": "Build",
+          "num_in": 1,
+          "num_out": 0,
+          "in_types": [
+            "...string"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Build(...string)"
+        },
+        {
+          "name": "BuildCondition",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "[]clause.Expression"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "BuildCondition(interface {}, ...interface {}) []clause.Expression"
+        },
+        {
+          "name": "Callback",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.callbacks"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Callback() *gorm.callbacks"
+        },
+        {
+          "name": "Changed",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...string"
+          ],
+          "out_types": [
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Changed(...string) bool"
+        },
+        {
+          "name": "Commit",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Commit() *gorm.DB"
+        },
+        {
+          "name": "Count",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*int64"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Count(*int64) *gorm.DB"
+        },
+        {
+          "name": "Create",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Create(interface {}) *gorm.DB"
+        },
+        {
+          "name": "CreateInBatches",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "int"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "CreateInBatches(interface {}, int) *gorm.DB"
+        },
+        {
+          "name": "DataTypeOf",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*schema.Field"
+          ],
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DataTypeOf(*schema.Field) string"
+        },
+        {
+          "name": "Debug",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Debug() *gorm.DB"
+        },
+        {
+          "name": "DefaultValueOf",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*schema.Field"
+          ],
+          "out_types": [
+            "clause.Expression"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DefaultValueOf(*schema.Field) clause.Expression"
+        },
+        {
+          "name": "Delete",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Delete(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Exec",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Exec(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Explain",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Explain(string, ...interface {}) string"
+        },
+        {
+          "name": "Find",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Find(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "FindInBatches",
+          "num_in": 3,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "int",
+            "func(*gorm.DB, int) error"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": false,
+          "signature": "FindInBatches(interface {}, int, func(*gorm.DB, int) error) *gorm.DB"
+        },
+        {
+          "name": "First",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "First(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "FirstOrCreate",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "FirstOrCreate(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "FirstOrInit",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "FirstOrInit(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Get",
+          "num_in": 1,
+          "num_out": 2,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "interface {}",
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Get(string) (interface {}, bool)"
+        },
+        {
+          "name": "Group",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Group(string) *gorm.DB"
+        },
+        {
+          "name": "Having",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Having(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Initialize",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*gorm.DB"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": true,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Initialize(*gorm.DB) error"
+        },
+        {
+          "name": "InstanceGet",
+          "num_in": 1,
+          "num_out": 2,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "interface {}",
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "InstanceGet(string) (interface {}, bool)"
+        },
+        {
+          "name": "InstanceSet",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "InstanceSet(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "Last",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Last(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Limit",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "int"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Limit(int) *gorm.DB"
+        },
+        {
+          "name": "Migrator",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "gorm.Migrator"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Migrator() gorm.Migrator"
+        },
+        {
+          "name": "Name",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Name() string"
+        },
+        {
+          "name": "Not",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Not(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Offset",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "int"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Offset(int) *gorm.DB"
+        },
+        {
+          "name": "Omit",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Omit(...string) *gorm.DB"
+        },
+        {
+          "name": "Or",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Or(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Order",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Order(interface {}) *gorm.DB"
+        },
+        {
+          "name": "Parse",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Parse(interface {}) error"
+        },
+        {
+          "name": "Pluck",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Pluck(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "Preload",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Preload(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Quote",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Quote(interface {}) string"
+        },
+        {
+          "name": "QuoteTo",
+          "num_in": 2,
+          "num_out": 0,
+          "in_types": [
+            "clause.Writer",
+            "interface {}"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "QuoteTo(clause.Writer, interface {})"
+        },
+        {
+          "name": "Raw",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Raw(string, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Rollback",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Rollback() *gorm.DB"
+        },
+        {
+          "name": "RollbackTo",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "RollbackTo(string) *gorm.DB"
+        },
+        {
+          "name": "Row",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*sql.Row"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Row() *sql.Row"
+        },
+        {
+          "name": "Rows",
+          "num_in": 0,
+          "num_out": 2,
+          "in_types": null,
+          "out_types": [
+            "*sql.Rows",
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Rows() (*sql.Rows, error)"
+        },
+        {
+          "name": "Save",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Save(interface {}) *gorm.DB"
+        },
+        {
+          "name": "SavePoint",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "SavePoint(string) *gorm.DB"
+        },
+        {
+          "name": "Scan",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Scan(interface {}) *gorm.DB"
+        },
+        {
+          "name": "ScanRows",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "*sql.Rows",
+            "interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "ScanRows(*sql.Rows, interface {}) error"
+        },
+        {
+          "name": "Scopes",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "...func(*gorm.DB) *gorm.DB"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Scopes(...func(*gorm.DB) *gorm.DB) *gorm.DB"
+        },
+        {
+          "name": "Select",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Select(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "SelectAndOmitColumns",
+          "num_in": 2,
+          "num_out": 2,
+          "in_types": [
+            "bool",
+            "bool"
+          ],
+          "out_types": [
+            "map[string]bool",
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "SelectAndOmitColumns(bool, bool) (map[string]bool, bool)"
+        },
+        {
+          "name": "Session",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*gorm.Session"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Session(*gorm.Session) *gorm.DB"
+        },
+        {
+          "name": "Set",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Set(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "SetColumn",
+          "num_in": 3,
+          "num_out": 0,
+          "in_types": [
+            "string",
+            "interface {}",
+            "...bool"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "SetColumn(string, interface {}, ...bool)"
+        },
+        {
+          "name": "SetupJoinTable",
+          "num_in": 3,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "SetupJoinTable(interface {}, string, interface {}) error"
+        },
+        {
+          "name": "Take",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Take(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "Transaction",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "func(*gorm.DB) error",
+            "...*sql.TxOptions"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": true,
+          "signature": "Transaction(func(*gorm.DB) error, ...*sql.TxOptions) error"
+        },
+        {
+          "name": "Update",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Update(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "UpdateColumn",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "UpdateColumn(string, interface {}) *gorm.DB"
+        },
+        {
+          "name": "UpdateColumns",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "UpdateColumns(interface {}) *gorm.DB"
+        },
+        {
+          "name": "Updates",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Updates(interface {}) *gorm.DB"
+        },
+        {
+          "name": "Use",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "gorm.Plugin"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Use(gorm.Plugin) error"
+        },
+        {
+          "name": "Where",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "interface {}",
+            "...interface {}"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Where(interface {}, ...interface {}) *gorm.DB"
+        },
+        {
+          "name": "WithContext",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "context.Context"
+          ],
+          "out_types": [
+            "*gorm.DB"
+          ],
+          "returns_db": true,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "WithContext(context.Context) *gorm.DB"
+        },
+        {
+          "name": "WriteByte",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "uint8"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "WriteByte(uint8) error"
+        },
+        {
+          "name": "WriteQuoted",
+          "num_in": 1,
+          "num_out": 0,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "WriteQuoted(interface {})"
+        },
+        {
+          "name": "WriteString",
+          "num_in": 1,
+          "num_out": 2,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "int",
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "WriteString(string) (int, error)"
+        }
+      ],
+      "derived_types": [
+        "*gorm.callbacks",
+        "clause.Expression",
+        "gorm.Migrator"
+      ]
+    },
+    "*gorm.callback": {
+      "type_name": "*gorm.callback",
+      "method_count": 5,
+      "methods": [
+        {
+          "name": "After",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.callback"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "After(string) *gorm.callback"
+        },
+        {
+          "name": "Before",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.callback"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Before(string) *gorm.callback"
+        },
+        {
+          "name": "Register",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "func(*gorm.DB)"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": false,
+          "signature": "Register(string, func(*gorm.DB)) error"
+        },
+        {
+          "name": "Remove",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Remove(string) error"
+        },
+        {
+          "name": "Replace",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "func(*gorm.DB)"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": false,
+          "signature": "Replace(string, func(*gorm.DB)) error"
+        }
+      ]
+    },
+    "*gorm.callbacks": {
+      "type_name": "*gorm.callbacks",
+      "method_count": 6,
+      "methods": [
+        {
+          "name": "Create",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.processor"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Create() *gorm.processor"
+        },
+        {
+          "name": "Delete",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.processor"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Delete() *gorm.processor"
+        },
+        {
+          "name": "Query",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.processor"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Query() *gorm.processor"
+        },
+        {
+          "name": "Raw",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.processor"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Raw() *gorm.processor"
+        },
+        {
+          "name": "Row",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.processor"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Row() *gorm.processor"
+        },
+        {
+          "name": "Update",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "*gorm.processor"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Update() *gorm.processor"
+        }
+      ],
+      "derived_types": [
+        "*gorm.processor"
+      ]
+    },
+    "*gorm.processor": {
+      "type_name": "*gorm.processor",
+      "method_count": 8,
+      "methods": [
+        {
+          "name": "After",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.callback"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "After(string) *gorm.callback"
+        },
+        {
+          "name": "Before",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*gorm.callback"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Before(string) *gorm.callback"
+        },
+        {
+          "name": "Execute",
+          "num_in": 1,
+          "num_out": 0,
+          "in_types": [
+            "*gorm.DB"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": true,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Execute(*gorm.DB)"
+        },
+        {
+          "name": "Get",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "func(*gorm.DB)"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Get(string) func(*gorm.DB)"
+        },
+        {
+          "name": "Match",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "func(*gorm.DB) bool"
+          ],
+          "out_types": [
+            "*gorm.callback"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": false,
+          "signature": "Match(func(*gorm.DB) bool) *gorm.callback"
+        },
+        {
+          "name": "Register",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "func(*gorm.DB)"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": false,
+          "signature": "Register(string, func(*gorm.DB)) error"
+        },
+        {
+          "name": "Remove",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Remove(string) error"
+        },
+        {
+          "name": "Replace",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "func(*gorm.DB)"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": true,
+          "variadic": false,
+          "signature": "Replace(string, func(*gorm.DB)) error"
+        }
+      ],
+      "derived_types": [
+        "*gorm.callback"
+      ]
+    },
+    "*schema.Schema": {
+      "type_name": "*schema.Schema",
+      "method_count": 7,
+      "methods": [
+        {
+          "name": "LookIndex",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*schema.Index"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "LookIndex(string) *schema.Index"
+        },
+        {
+          "name": "LookUpField",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "*schema.Field"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "LookUpField(string) *schema.Field"
+        },
+        {
+          "name": "MakeSlice",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "reflect.Value"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "MakeSlice() reflect.Value"
+        },
+        {
+          "name": "ParseCheckConstraints",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "map[string]schema.Check"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "ParseCheckConstraints() map[string]schema.Check"
+        },
+        {
+          "name": "ParseField",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "reflect.StructField"
+          ],
+          "out_types": [
+            "*schema.Field"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "ParseField(reflect.StructField) *schema.Field"
+        },
+        {
+          "name": "ParseIndexes",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "map[string]schema.Index"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "ParseIndexes() map[string]schema.Index"
+        },
+        {
+          "name": "String",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "String() string"
+        }
+      ]
+    },
+    "clause.Clause": {
+      "type_name": "clause.Clause",
+      "method_count": 1,
+      "methods": [
+        {
+          "name": "Build",
+          "num_in": 1,
+          "num_out": 0,
+          "in_types": [
+            "clause.Builder"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Build(clause.Builder)"
+        }
+      ]
+    },
+    "clause.Expr": {
+      "type_name": "clause.Expr",
+      "method_count": 1,
+      "methods": [
+        {
+          "name": "Build",
+          "num_in": 1,
+          "num_out": 0,
+          "in_types": [
+            "clause.Builder"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Build(clause.Builder)"
+        }
+      ]
+    },
+    "clause.Expression": {
+      "type_name": "clause.Expression",
+      "method_count": 1,
+      "methods": [
+        {
+          "name": "Build",
+          "num_in": 0,
+          "num_out": 0,
+          "in_types": null,
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Build()"
+        }
+      ]
+    },
+    "gorm.Config": {
+      "type_name": "gorm.Config",
+      "method_count": 8,
+      "methods": [
+        {
+          "name": "BindVarTo",
+          "num_in": 3,
+          "num_out": 0,
+          "in_types": [
+            "clause.Writer",
+            "*gorm.Statement",
+            "interface {}"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "BindVarTo(clause.Writer, *gorm.Statement, interface {})"
+        },
+        {
+          "name": "DataTypeOf",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*schema.Field"
+          ],
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DataTypeOf(*schema.Field) string"
+        },
+        {
+          "name": "DefaultValueOf",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*schema.Field"
+          ],
+          "out_types": [
+            "clause.Expression"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DefaultValueOf(*schema.Field) clause.Expression"
+        },
+        {
+          "name": "Explain",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "...interface {}"
+          ],
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "Explain(string, ...interface {}) string"
+        },
+        {
+          "name": "Initialize",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*gorm.DB"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": true,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Initialize(*gorm.DB) error"
+        },
+        {
+          "name": "Migrator",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "*gorm.DB"
+          ],
+          "out_types": [
+            "gorm.Migrator"
+          ],
+          "returns_db": false,
+          "takes_db": true,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Migrator(*gorm.DB) gorm.Migrator"
+        },
+        {
+          "name": "Name",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "Name() string"
+        },
+        {
+          "name": "QuoteTo",
+          "num_in": 2,
+          "num_out": 0,
+          "in_types": [
+            "clause.Writer",
+            "string"
+          ],
+          "out_types": null,
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "QuoteTo(clause.Writer, string)"
+        }
+      ],
+      "derived_types": [
+        "clause.Expression",
+        "gorm.Migrator"
+      ]
+    },
+    "gorm.Migrator": {
+      "type_name": "gorm.Migrator",
+      "method_count": 23,
+      "methods": [
+        {
+          "name": "AddColumn",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "AddColumn(string) error"
+        },
+        {
+          "name": "AlterColumn",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "AlterColumn(string) error"
+        },
+        {
+          "name": "AutoMigrate",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "AutoMigrate() error"
+        },
+        {
+          "name": "ColumnTypes",
+          "num_in": 0,
+          "num_out": 2,
+          "in_types": null,
+          "out_types": [
+            "[]gorm.ColumnType",
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "ColumnTypes() ([]gorm.ColumnType, error)"
+        },
+        {
+          "name": "CreateConstraint",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "CreateConstraint(string) error"
+        },
+        {
+          "name": "CreateIndex",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "CreateIndex(string) error"
+        },
+        {
+          "name": "CreateTable",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "CreateTable() error"
+        },
+        {
+          "name": "CreateView",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "gorm.ViewOption"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "CreateView(gorm.ViewOption) error"
+        },
+        {
+          "name": "CurrentDatabase",
+          "num_in": -1,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "string"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "CurrentDatabase() string"
+        },
+        {
+          "name": "DropColumn",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DropColumn(string) error"
+        },
+        {
+          "name": "DropConstraint",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DropConstraint(string) error"
+        },
+        {
+          "name": "DropIndex",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DropIndex(string) error"
+        },
+        {
+          "name": "DropTable",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": true,
+          "signature": "DropTable() error"
+        },
+        {
+          "name": "DropView",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "DropView() error"
+        },
+        {
+          "name": "FullDataTypeOf",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "clause.Expr"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "FullDataTypeOf() clause.Expr"
+        },
+        {
+          "name": "HasColumn",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "HasColumn(string) bool"
+        },
+        {
+          "name": "HasConstraint",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "HasConstraint(string) bool"
+        },
+        {
+          "name": "HasIndex",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "string"
+          ],
+          "out_types": [
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "HasIndex(string) bool"
+        },
+        {
+          "name": "HasTable",
+          "num_in": 0,
+          "num_out": 1,
+          "in_types": null,
+          "out_types": [
+            "bool"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "HasTable() bool"
+        },
+        {
+          "name": "MigrateColumn",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "*schema.Field",
+            "gorm.ColumnType"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "MigrateColumn(*schema.Field, gorm.ColumnType) error"
+        },
+        {
+          "name": "RenameColumn",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "RenameColumn(string, string) error"
+        },
+        {
+          "name": "RenameIndex",
+          "num_in": 2,
+          "num_out": 1,
+          "in_types": [
+            "string",
+            "string"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "RenameIndex(string, string) error"
+        },
+        {
+          "name": "RenameTable",
+          "num_in": 1,
+          "num_out": 1,
+          "in_types": [
+            "interface {}"
+          ],
+          "out_types": [
+            "error"
+          ],
+          "returns_db": false,
+          "takes_db": false,
+          "takes_db_func": false,
+          "variadic": false,
+          "signature": "RenameTable(interface {}) error"
+        }
+      ],
+      "derived_types": [
+        "clause.Expr"
+      ]
+    }
+  },
+  "pollution_paths": [
+    "*gorm.DB.Assign returns *gorm.DB (chain point)",
+    "*gorm.DB.Attrs returns *gorm.DB (chain point)",
+    "*gorm.DB.Begin returns *gorm.DB (chain point)",
+    "*gorm.DB.Clauses returns *gorm.DB (chain point)",
+    "*gorm.DB.Commit returns *gorm.DB (chain point)",
+    "*gorm.DB.Count returns *gorm.DB (chain point)",
+    "*gorm.DB.Create returns *gorm.DB (chain point)",
+    "*gorm.DB.CreateInBatches returns *gorm.DB (chain point)",
+    "*gorm.DB.Debug returns *gorm.DB (chain point)",
+    "*gorm.DB.Delete returns *gorm.DB (chain point)",
+    "*gorm.DB.Distinct returns *gorm.DB (chain point)",
+    "*gorm.DB.Exec returns *gorm.DB (chain point)",
+    "*gorm.DB.Find returns *gorm.DB (chain point)",
+    "*gorm.DB.FindInBatches returns *gorm.DB (chain point)",
+    "*gorm.DB.FindInBatches takes func with *gorm.DB",
+    "*gorm.DB.First returns *gorm.DB (chain point)",
+    "*gorm.DB.FirstOrCreate returns *gorm.DB (chain point)",
+    "*gorm.DB.FirstOrInit returns *gorm.DB (chain point)",
+    "*gorm.DB.Group returns *gorm.DB (chain point)",
+    "*gorm.DB.Having returns *gorm.DB (chain point)",
+    "*gorm.DB.Initialize takes *gorm.DB directly",
+    "*gorm.DB.InstanceSet returns *gorm.DB (chain point)",
+    "*gorm.DB.Joins returns *gorm.DB (chain point)",
+    "*gorm.DB.Last returns *gorm.DB (chain point)",
+    "*gorm.DB.Limit returns *gorm.DB (chain point)",
+    "*gorm.DB.Model returns *gorm.DB (chain point)",
+    "*gorm.DB.Not returns *gorm.DB (chain point)",
+    "*gorm.DB.Offset returns *gorm.DB (chain point)",
+    "*gorm.DB.Omit returns *gorm.DB (chain point)",
+    "*gorm.DB.Or returns *gorm.DB (chain point)",
+    "*gorm.DB.Order returns *gorm.DB (chain point)",
+    "*gorm.DB.Pluck returns *gorm.DB (chain point)",
+    "*gorm.DB.Preload returns *gorm.DB (chain point)",
+    "*gorm.DB.Raw returns *gorm.DB (chain point)",
+    "*gorm.DB.Rollback returns *gorm.DB (chain point)",
+    "*gorm.DB.RollbackTo returns *gorm.DB (chain point)",
+    "*gorm.DB.Save returns *gorm.DB (chain point)",
+    "*gorm.DB.SavePoint returns *gorm.DB (chain point)",
+    "*gorm.DB.Scan returns *gorm.DB (chain point)",
+    "*gorm.DB.Scopes returns *gorm.DB (chain point)",
+    "*gorm.DB.Select returns *gorm.DB (chain point)",
+    "*gorm.DB.Session returns *gorm.DB (chain point)",
+    "*gorm.DB.Set returns *gorm.DB (chain point)",
+    "*gorm.DB.Table returns *gorm.DB (chain point)",
+    "*gorm.DB.Take returns *gorm.DB (chain point)",
+    "*gorm.DB.Transaction takes func with *gorm.DB",
+    "*gorm.DB.Unscoped returns *gorm.DB (chain point)",
+    "*gorm.DB.Update returns *gorm.DB (chain point)",
+    "*gorm.DB.UpdateColumn returns *gorm.DB (chain point)",
+    "*gorm.DB.UpdateColumns returns *gorm.DB (chain point)",
+    "*gorm.DB.Updates returns *gorm.DB (chain point)",
+    "*gorm.DB.Where returns *gorm.DB (chain point)",
+    "*gorm.DB.WithContext returns *gorm.DB (chain point)",
+    "*gorm.Statement.Assign returns *gorm.DB (chain point)",
+    "*gorm.Statement.Attrs returns *gorm.DB (chain point)",
+    "*gorm.Statement.Begin returns *gorm.DB (chain point)",
+    "*gorm.Statement.Commit returns *gorm.DB (chain point)",
+    "*gorm.Statement.Count returns *gorm.DB (chain point)",
+    "*gorm.Statement.Create returns *gorm.DB (chain point)",
+    "*gorm.Statement.CreateInBatches returns *gorm.DB (chain point)",
+    "*gorm.Statement.Debug returns *gorm.DB (chain point)",
+    "*gorm.Statement.Delete returns *gorm.DB (chain point)",
+    "*gorm.Statement.Exec returns *gorm.DB (chain point)",
+    "*gorm.Statement.Find returns *gorm.DB (chain point)",
+    "*gorm.Statement.FindInBatches returns *gorm.DB (chain point)",
+    "*gorm.Statement.FindInBatches takes func with *gorm.DB",
+    "*gorm.Statement.First returns *gorm.DB (chain point)",
+    "*gorm.Statement.FirstOrCreate returns *gorm.DB (chain point)",
+    "*gorm.Statement.FirstOrInit returns *gorm.DB (chain point)",
+    "*gorm.Statement.Group returns *gorm.DB (chain point)",
+    "*gorm.Statement.Having returns *gorm.DB (chain point)",
+    "*gorm.Statement.Initialize takes *gorm.DB directly",
+    "*gorm.Statement.InstanceSet returns *gorm.DB (chain point)",
+    "*gorm.Statement.Last returns *gorm.DB (chain point)",
+    "*gorm.Statement.Limit returns *gorm.DB (chain point)",
+    "*gorm.Statement.Not returns *gorm.DB (chain point)",
+    "*gorm.Statement.Offset returns *gorm.DB (chain point)",
+    "*gorm.Statement.Omit returns *gorm.DB (chain point)",
+    "*gorm.Statement.Or returns *gorm.DB (chain point)",
+    "*gorm.Statement.Order returns *gorm.DB (chain point)",
+    "*gorm.Statement.Pluck returns *gorm.DB (chain point)",
+    "*gorm.Statement.Preload returns *gorm.DB (chain point)",
+    "*gorm.Statement.Raw returns *gorm.DB (chain point)",
+    "*gorm.Statement.Rollback returns *gorm.DB (chain point)",
+    "*gorm.Statement.RollbackTo returns *gorm.DB (chain point)",
+    "*gorm.Statement.Save returns *gorm.DB (chain point)",
+    "*gorm.Statement.SavePoint returns *gorm.DB (chain point)",
+    "*gorm.Statement.Scan returns *gorm.DB (chain point)",
+    "*gorm.Statement.Scopes returns *gorm.DB (chain point)",
+    "*gorm.Statement.Select returns *gorm.DB (chain point)",
+    "*gorm.Statement.Session returns *gorm.DB (chain point)",
+    "*gorm.Statement.Set returns *gorm.DB (chain point)",
+    "*gorm.Statement.Take returns *gorm.DB (chain point)",
+    "*gorm.Statement.Transaction takes func with *gorm.DB",
+    "*gorm.Statement.Update returns *gorm.DB (chain point)",
+    "*gorm.Statement.UpdateColumn returns *gorm.DB (chain point)",
+    "*gorm.Statement.UpdateColumns returns *gorm.DB (chain point)",
+    "*gorm.Statement.Updates returns *gorm.DB (chain point)",
+    "*gorm.Statement.Where returns *gorm.DB (chain point)",
+    "*gorm.Statement.WithContext returns *gorm.DB (chain point)",
+    "*gorm.callback.Register takes func with *gorm.DB",
+    "*gorm.callback.Replace takes func with *gorm.DB",
+    "*gorm.processor.Execute takes *gorm.DB directly",
+    "*gorm.processor.Match takes func with *gorm.DB",
+    "*gorm.processor.Register takes func with *gorm.DB",
+    "*gorm.processor.Replace takes func with *gorm.DB",
+    "gorm.Config.Initialize takes *gorm.DB directly",
+    "gorm.Config.Migrator takes *gorm.DB directly"
+  ]
+}

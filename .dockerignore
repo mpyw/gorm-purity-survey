@@ -1,0 +1,27 @@
+# Exclude host go.mod/go.sum - we generate version-specific ones
+go.mod
+go.sum
+
+# Results (generated per version)
+results/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# MCP
+.mcp.json
+.kiri/
+
+# Binaries
+bin/
+*.exe
+*.test
+*.out
