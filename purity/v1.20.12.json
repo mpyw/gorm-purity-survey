@@ -18,6 +18,7 @@
       "exists": true,
       "pure": true,
       "immutable_return": true,
+      "return_clone": 2,
       "pure_note": "Begin creates new transaction instance",
       "immutable_note": "Begin returns new transaction (immutable)"
     },
@@ -29,7 +30,8 @@
     "Count": {
       "name": "Count",
       "exists": true,
-      "pure": false
+      "pure": false,
+      "finisher_preserves_joins": true
     },
     "Create": {
       "name": "Create",
@@ -41,6 +43,7 @@
       "exists": true,
       "pure": true,
       "immutable_return": true,
+      "return_clone": 2,
       "pure_note": "Debug creates new instance",
       "immutable_note": "Debug returns immutable (like Session)"
     },
@@ -144,7 +147,8 @@
       "exists": true,
       "pure": false,
       "impure_mode": "accumulate",
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 0
     },
     "Order": {
       "name": "Order",
@@ -198,7 +202,9 @@
       "name": "Scopes",
       "exists": true,
       "pure": false,
-      "immutable_return": false
+      "immutable_return": false,
+      "return_clone": 1,
+      "callback_clone": 0
     },
     "Select": {
       "name": "Select",
@@ -212,6 +218,7 @@
       "exists": true,
       "pure": true,
       "immutable_return": false,
+      "return_clone": 2,
       "pure_note": "Session creates new instance",
       "immutable_note": "CRITICAL BUG: Session should return immutable!"
     },
@@ -248,6 +255,7 @@
       "pure": false,
       "impure_mode": "accumulate",
       "immutable_return": false,
+      "return_clone": 0,
       "pure_note": "Where pollutes receiver when result discarded",
       "immutable_note": "Where return value is mutable (branches interfere)"
     },
@@ -256,6 +264,7 @@
       "exists": true,
       "pure": true,
       "immutable_return": true,
+      "return_clone": 2,
       "pure_note": "WithContext creates new instance",
       "immutable_note": "WithContext returns immutable (like Session)"
     }

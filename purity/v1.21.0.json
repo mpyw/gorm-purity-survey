@@ -18,6 +18,7 @@
       "exists": true,
       "pure": true,
       "immutable_return": true,
+      "return_clone": 2,
       "pure_note": "Begin creates new transaction instance",
       "immutable_note": "Begin returns new transaction (immutable)"
     },
@@ -29,7 +30,9 @@
     "Count": {
       "name": "Count",
       "exists": true,
-      "pure": true
+      "pure": true,
+      "finisher_preserves_joins": false,
+      "finisher_note": "BUG: Count() clears Joins (PR #7027)"
     },
     "Create": {
       "name": "Create",
@@ -46,6 +49,7 @@
       "exists": true,
       "pure": true,
       "immutable_return": true,
+      "return_clone": 2,
       "pure_note": "Debug creates new instance",
       "immutable_note": "Debug returns immutable (like Session)"
     },
@@ -144,7 +148,8 @@
       "name": "Or",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "Order": {
       "name": "Order",
@@ -197,7 +202,9 @@
       "name": "Scopes",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0,
+      "callback_clone": -1
     },
     "Select": {
       "name": "Select",
@@ -210,6 +217,7 @@
       "exists": true,
       "pure": true,
       "immutable_return": true,
+      "return_clone": 2,
       "pure_note": "Session creates new instance"
     },
     "Table": {
@@ -243,13 +251,15 @@
       "name": "Where",
       "exists": true,
       "pure": true,
-      "immutable_return": true
+      "immutable_return": true,
+      "return_clone": 0
     },
     "WithContext": {
       "name": "WithContext",
       "exists": true,
       "pure": true,
       "immutable_return": true,
+      "return_clone": 2,
       "pure_note": "WithContext creates new instance",
       "immutable_note": "WithContext returns immutable (like Session)"
     }

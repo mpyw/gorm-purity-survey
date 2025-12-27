@@ -548,9 +548,53 @@ Implemented for: Where, Or, Not, Select, Order, Joins, Limit, Offset
 
 **Key Finding**: Limit/Offset changed from impure-overwrite to pure in v1.25.7
 
+#### 4.1 Clone Field Detection ✓ (Completed)
+
+Discovered GORM's unexported `clone` field in `*gorm.DB` that controls cloning behavior:
+- `clone=0`: No cloning (DANGEROUS - mutations leak!)
+- `clone=1`: Clone Statement with empty Clauses
+- `clone=2`: Full clone (Statement.clone(), keeps Clauses)
+
+**How to detect**: Use `reflect` to access unexported field:
+```go
+func getCloneValue(db *gorm.DB) int {
+    rv := reflect.ValueOf(db).Elem()
+    cloneField := rv.FieldByName("clone")
+    if !cloneField.IsValid() {
+        return -1
+    }
+    return int(cloneField.Int())
+}
+```
+
+**Cross-version Clone Value Analysis (77 versions surveyed):**
+
+| Version Range | Session | Begin | Scopes return | Scopes cb |
+|---------------|---------|-------|---------------|-----------|
+| v1.20.0-v1.20.6 | 1 | 2 | 1 | 0 ☠️ |
+| v1.20.7-v1.20.12 | 2 | 2 | 1 | 0 ☠️ |
+| v1.21.0-v1.23.x | 2 | 2 | 0 | -1* |
+| v1.24.0+ | 2 | 1 | 0 | -1* |
+
+*`-1` means callback wasn't executed during test (test setup issue, not version change)
+
+**Key Findings:**
+1. **Session clone swapped**: v1.20.0-v1.20.6 had clone=1, v1.20.7+ has clone=2
+2. **Begin clone swapped**: v1.20.x-v1.23.x had clone=2, v1.24.0+ has clone=1
+3. **Scopes callback clone=0 in v1.20.x**: DANGEROUS! Mutations inside Scopes callback leak!
+4. **Scopes return clone=1→0**: Changed in v1.21.0, meaning Scopes() itself no longer clones
+5. **Where/Or return clone=0**: Always 0 (no surprise, these are impure)
+
+**Immutable-Return Rule**: `clone >= 1` means immutable-return (safe for branching)
+
+**Critical Bug - Session immutable_return=false despite clone=2:**
+The SQL-based test shows Session return value is NOT immutable (branches interfere),
+but clone=2 suggests it SHOULD be. This indicates `getInstance()` may be called
+before clone value is checked in some code paths.
+
 Additional test dimensions needed to catch known regressions:
 
-#### 4.1 Finisher Reuse Test (Joins Preservation)
+#### 4.2 Finisher Reuse Test (Joins Preservation)
 **Issue**: PR #7027 fixed Count() clearing Joins, but behavior varies by version
 
 ```go
@@ -568,7 +612,7 @@ q.Find(&users)     // 2nd finisher - Joins still there?
 
 **Versions to watch**: v1.25.x where PR #7027 was applied
 
-#### 4.2 InnerJoins + Preload Duplicate Test
+#### 4.3 InnerJoins + Preload Duplicate Test
 **Issue**: PR #7014 (v1.25.12) broke InnerJoins + nested Preload
 
 ```go
@@ -587,7 +631,7 @@ db.Model(&Comic{}).
 
 **Versions to watch**: v1.25.12+, v1.30.x, v1.31.x
 
-#### 4.3 Preload Callback Argument Mutation
+#### 4.4 Preload Callback Argument Mutation
 **Issue**: GitHub #7662 - Preload callback's `*gorm.DB` became mutable in v1.30.0
 
 ```go
@@ -859,11 +903,16 @@ func testAccumulation_Where() {
 
 ### When Resuming This Work
 
-1. Read this section first
-2. **Run godump exploration first** to identify relevant Statement fields
-3. Create `snapshotStatement()` function
-4. Rewrite tests with state comparison approach
-5. Key versions to verify: v1.25.11, v1.25.12, v1.30.0, v1.31.1
+**Completed (as of 2025-12-27):**
+- ✅ Clone field detection integrated into purity tests
+- ✅ 77 versions surveyed with return_clone and callback_clone fields
+- ✅ godump exploration script created (`scripts/explore-statement/main.go`)
+
+**Next Steps:**
+1. Fix Scopes callback_clone detection (currently -1 in v1.21.0+)
+2. Implement remaining tests (4.2 Finisher Reuse, 4.3 InnerJoins+Preload, 4.4 Preload callback)
+3. Investigate why Session immutable_return=false despite clone=2
+4. Key versions to verify: v1.25.11, v1.25.12, v1.30.0, v1.31.1
 
 ## References
 
