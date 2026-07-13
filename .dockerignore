@@ -16,10 +16,6 @@ results/
 # OS
 .DS_Store
 
-# MCP
-.mcp.json
-.kiri/
-
 # Binaries
 bin/
 *.exe
