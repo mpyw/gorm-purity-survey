@@ -25,6 +25,3 @@ vendor/
 # OS
 .DS_Store
 Thumbs.db
-
-# MCP
-.mcp.json
