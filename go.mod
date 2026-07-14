@@ -4,9 +4,9 @@ go 1.22
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/goforj/godump v1.9.0
+	github.com/goforj/godump v1.9.1
 	gorm.io/driver/mysql v1.6.0
-	gorm.io/gorm v1.31.1
+	gorm.io/gorm v1.31.2
 )
 
 require (
