@@ -101,7 +101,8 @@ Full results in [purity/REPORT.md](./purity/REPORT.md), including:
 gorm-purity-survey/
 ├── README.md              # This file
 ├── USAGE_GUIDE.md         # Practical usage patterns guide
-├── CLAUDE.md              # Development instructions
+├── AGENTS.md              # Repository instructions
+├── design/                # Implementation notes
 │
 ├── methods/               # Method enumeration results
 │   ├── REPORT.md         # Summary report
